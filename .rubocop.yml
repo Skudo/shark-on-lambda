@@ -1,0 +1,3 @@
+Naming/FileName:
+  Exclude:
+    - lib/shark-on-lambda.rb

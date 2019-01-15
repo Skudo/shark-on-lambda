@@ -1,0 +1,1 @@
+require 'shark-on-lambda'
