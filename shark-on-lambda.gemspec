@@ -2,7 +2,7 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'shark-on-lambda/version'
+require 'shark_on_lambda/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'shark-on-lambda'
@@ -26,6 +26,11 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
+
+  spec.add_dependency 'bima-doorkeeper-rails', '~> 3.2'
+  spec.add_dependency 'bima-http', '~> 2.0'
+  spec.add_dependency 'jsonapi-rb'
+  spec.add_dependency 'rack'
 
   spec.add_development_dependency 'bundler', '~> 1.17'
   spec.add_development_dependency 'rake', '~> 10.0'
