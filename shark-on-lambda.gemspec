@@ -4,6 +4,7 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'shark_on_lambda/version'
 
+# rubocop:disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name          = 'shark-on-lambda'
   spec.version       = SharkOnLambda::VERSION
@@ -39,3 +40,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'simplecov'
 end
+# rubocop:enable Metrics/BlockLength

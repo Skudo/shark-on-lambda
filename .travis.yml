@@ -4,4 +4,11 @@ language: ruby
 cache: bundler
 rvm:
   - 2.5.3
-before_install: gem install bundler -v 1.17.2
+
+install:
+  - gem install bundler -v 1.17.2
+  - bundle install
+
+script:
+  - bundle exec rake spec
+  - bundle exec rubocop --except Style/Documentation .
