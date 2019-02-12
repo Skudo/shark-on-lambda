@@ -67,10 +67,6 @@ module SharkOnLambda
       run_actions(method, before_actions)
     end
 
-    def run_filter_action?(method, filter_action)
-      !skip_filter_action?(method, filter_action)
-    end
-
     def skip_filter_action?(method, filter_action)
       only = filter_action[:only]
       except = filter_action[:except]

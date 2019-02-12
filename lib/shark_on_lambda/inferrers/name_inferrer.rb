@@ -33,8 +33,6 @@ module SharkOnLambda
                    base.sub(/_#{type}\z/, '')
                  when :model
                    base
-                 else
-                   raise ArgumentError, "Can't infer names from type `#{type}'."
                  end
           new(base)
         end

@@ -41,7 +41,7 @@ module SharkOnLambda
       # rubocop:enable Naming/PredicateName
 
       def message
-        ::Rack::Utils::HTTP_STATUS_CODES[@status]
+        ::Rack::Utils::HTTP_STATUS_CODES[response_code]
       end
       alias status_message message
 
@@ -64,15 +64,15 @@ module SharkOnLambda
       protected
 
       def response_status_code
-        return @status.to_i if response_body.present?
-        return 204 if (200..299).cover?(@status.to_i)
-        return 304 if (300..399).cover?(@status.to_i)
+        return response_code.to_i if response_body.present?
+        return 204 if (200..299).cover?(response_code.to_i)
+        return 304 if (300..399).cover?(response_code.to_i)
 
-        @status.to_i
+        response_code.to_i
       end
 
       def response_body
-        return if STATUS_WITH_NO_ENTITY_BODY.include?(@status)
+        return if STATUS_WITH_NO_ENTITY_BODY.include?(response_code)
         return if body.blank?
 
         body.is_a?(String) ? body : body.to_json

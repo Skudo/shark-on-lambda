@@ -13,7 +13,7 @@ module SharkOnLambda
         next unless data.is_a?(Hash)
 
         data = data.with_indifferent_access
-        result.merge!(data[stage] || data[:default] || {})
+        result.deep_merge!(data[stage] || data[fallback] || {})
       end
       result
     end

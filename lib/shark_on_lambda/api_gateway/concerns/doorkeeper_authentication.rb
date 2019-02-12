@@ -5,8 +5,6 @@ module SharkOnLambda
     module DoorkeeperAuthentication
       include ::Doorkeeper::Authentication
 
-      protected
-
       attr_reader :current_user
 
       def authenticate!

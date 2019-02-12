@@ -23,11 +23,11 @@ module SharkOnLambda
       attr_reader :input
 
       def object_class
-        case input
-        when Class then input
-        when String, Symbol then input.to_s.camelize.constantize
-        else input.class
+        if input.is_a?(String) || input.is_a?(Symbol)
+          return input.to_s.camelize.constantize
         end
+
+        input
       end
 
       def serializer_class_names

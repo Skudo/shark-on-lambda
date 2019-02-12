@@ -124,7 +124,7 @@ module SharkOnLambda
         @request_parameters = @request_parameters.merge(data)
       rescue JSON::ParserError => error
         raise Errors[400], error.message
-      rescue
+      rescue StandardError
         raise Errors[400], 'The request body must be empty or a JSON object.'
       end
       alias POST request_parameters

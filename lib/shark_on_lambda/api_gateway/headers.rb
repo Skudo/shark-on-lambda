@@ -7,12 +7,12 @@ module SharkOnLambda
         @headers = {}
       end
 
-      def []=(key, value)
-        @headers[normalized_key(key)] = value.to_s
-      end
-
       def [](key)
         @headers[normalized_key(key)]
+      end
+
+      def []=(key, value)
+        @headers[normalized_key(key)] = value.to_s
       end
 
       def delete(key)
