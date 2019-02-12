@@ -10,4 +10,5 @@ rubocop:
   script:
     - gem install bundler
     - bundle install
+    # TODO: Add documentation and remove the Style/Documentation exception.
     - bundle exec rubocop --except Style/Documentation
