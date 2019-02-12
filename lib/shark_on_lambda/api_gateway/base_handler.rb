@@ -4,19 +4,14 @@ module SharkOnLambda
   module ApiGateway
     class BaseHandler
       class << self
-        def controller_class
-          controller_class_name.safe_constantize
-        end
+        attr_writer :controller_class
 
-        def controller_class_name
-          return @controller_class_name if defined?(@controller_class_name)
+        def controller_class
+          return @controller_class if defined?(@controller_class)
 
           name_inferrer = Inferrers::NameInferrer.from_handler_name(name)
-          @controller_class_name = name_inferrer.controller
-        end
-
-        def controller_class_name=(name)
-          @controller_class_name = name.to_s
+          controller_class_name = name_inferrer.controller
+          @controller_class = controller_class_name.safe_constantize
         end
 
         def define_handler_methods!
@@ -31,13 +26,12 @@ module SharkOnLambda
         protected
 
         def known_actions
-          return @known_actions if defined?(@known_actions)
-
-          @known_actions = controller_class.public_instance_methods(false)
+          controller_class.public_instance_methods(false)
         end
       end
 
       def call(action, event:, context:)
+        controller_class = self.class.controller_class
         controller = controller_class.new(event: event, context: context)
         controller.call(action)
       rescue StandardError => error
