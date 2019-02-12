@@ -1,3 +1,9 @@
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - 'spec/factories/*.rb'
+
 Naming/FileName:
   Exclude:
     - lib/shark-on-lambda.rb
+    - spec/shark-on-lambda_spec.rb
