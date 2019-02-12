@@ -4,18 +4,13 @@ module SharkOnLambda
   module ApiGateway
     class BaseController
       include FilterActions
-      include JsonapiSupport
+      include HttpResponseValidation
 
       attr_reader :event, :context
-      attr_reader :params, :request, :response
 
       def initialize(event:, context:)
         @event = event
         @context = context
-
-        @request = Request.new(event: event, context: context)
-        @response = Response.new
-        @params = Parameters.new(request)
       end
 
       def call(method)
@@ -23,20 +18,36 @@ module SharkOnLambda
         response.to_h
       end
 
-      protected
+      def params
+        @params ||= Parameters.new(request)
+      end
 
-      def redirect_to(url, status: 307, headers: {})
-        unless url?(url)
-          raise Errors[500], "`#{url}' is not a valid redirection target."
-        end
+      def redirect_to(url, status: 307, message: nil)
+        status = status.to_i
+        validate_redirection_url!(url)
+        validate_redirection_status!(status)
 
-        response.status = status
-        headers.each_pair { |key, value| response.set_header(key, value) }
-        response.set_header('Location', url)
-        response.body = nil
+        uri = URI.parse(url)
+        response.set_header('Location', uri.to_s)
+        body = message.presence || "You are being redirected to: #{url}"
 
+        render(body, status: status)
+      end
+
+      def render(object, status: 200)
+        update_response(status: status, body: object)
         respond!
       end
+
+      def request
+        @request ||= Request.new(event: event, context: context)
+      end
+
+      def response
+        @response ||= Response.new
+      end
+
+      protected
 
       def respond!
         if responded?
@@ -52,11 +63,12 @@ module SharkOnLambda
         @responded.present?
       end
 
-      def url?(url)
-        URI.parse(url.to_s)
-        url.present?
-      rescue URI::InvalidURIError
-        false
+      def update_response(status:, body: nil)
+        status = status.to_i
+        validate_response_status!(status)
+
+        response.status = status
+        response.body = body.to_s.presence
       end
     end
   end

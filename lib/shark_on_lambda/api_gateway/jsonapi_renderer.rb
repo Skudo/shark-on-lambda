@@ -8,7 +8,6 @@ module SharkOnLambda
       end
 
       def render(object, options = {})
-        options = options.to_h
         object = transform_active_model_errors(object)
 
         unless renderable?(object, options)
