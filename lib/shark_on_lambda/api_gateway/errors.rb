@@ -14,7 +14,10 @@ module SharkOnLambda
         end
 
         def detail
-          @detail.presence || message
+          return @detail if @detail.present?
+          return nil if message == self.class.name
+
+          message
         end
 
         def title
