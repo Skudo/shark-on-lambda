@@ -7,4 +7,6 @@ RSpec.describe SharkOnLambda::Configuration do
     expect(subject.ancestors).to include(Singleton)
     expect(subject.instance).to be_a(SharkOnLambda::Configuration)
   end
+
+  # TODO: Add tests for SharkOnLambda::Configuration.
 end

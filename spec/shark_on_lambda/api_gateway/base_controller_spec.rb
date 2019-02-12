@@ -134,6 +134,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
     end
   end
 
+  # TODO: Add actual testing for render behaviour.
   describe '#render' do
     let(:body) { 'Hello, world!' }
 
