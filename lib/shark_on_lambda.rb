@@ -8,6 +8,7 @@ require 'doorkeeper/core'
 require 'jsonapi/deserializable'
 require 'jsonapi/serializable'
 require 'rack/utils'
+require 'yaml'
 
 require 'shark_on_lambda/version'
 

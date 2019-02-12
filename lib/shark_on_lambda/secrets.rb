@@ -7,23 +7,31 @@ module SharkOnLambda
     class << self
       include YamlConfigLoader
 
-      def load(stage)
-        load_secrets(stage)
+      attr_writer :files
+
+      def load(stage, fallback: :default)
+        load_secrets(stage, fallback: fallback)
 
         instance
       end
 
-      def secrets_files
-        %w[config/secrets.yml config/secrets.local.yml].map do |path|
-          File.join(SharkOnLambda.config.root, path)
-        end
+      def files
+        return @files if defined?(@files)
+
+        @files = paths(%w[config/secrets.yml config/secrets.local.yml])
       end
 
       protected
 
-      def load_secrets(stage)
-        secrets = load_yaml_files(stage, *secrets_files)
+      def load_secrets(stage, fallback:)
+        secrets = load_yaml_files(stage: stage,
+                                  fallback: fallback,
+                                  paths: files)
         secrets.each_pair { |key, value| instance.send("#{key}=", value) }
+      end
+
+      def paths(files)
+        files.map { |file| SharkOnLambda.config.root.join(file) }
       end
     end
 

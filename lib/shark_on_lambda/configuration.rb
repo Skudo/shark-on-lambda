@@ -9,38 +9,50 @@ module SharkOnLambda
     class << self
       include YamlConfigLoader
 
-      def database_config_files
-        %w[config/database.yml config/database.local.yml].map do |path|
-          File.join(instance.root, path)
-        end
+      attr_writer :database_files, :settings_files
+
+      def database_files
+        return @database_files if defined?(@database_files)
+
+        files = %w[config/database.yml config/database.local.yml]
+        @database_files = paths(files)
       end
 
-      def load(stage)
-        load_settings(stage)
-        load_database_configuration(stage)
+      def load(stage, fallback: :default)
+        load_settings(stage, fallback: fallback)
+        load_database_configuration(stage, fallback: fallback)
 
         instance
       end
 
       def settings_files
-        %w[config/settings.yml config/settings.local.yml].map do |path|
-          File.join(instance.root, path)
-        end
+        return @settings_files if defined?(@settings_files)
+
+        files = %w[config/settings.yml config/settings.local.yml]
+        @settings_files = paths(files)
       end
 
       protected
 
-      def load_database_configuration(stage)
-        instance.database = load_yaml_files(stage, *database_config_files)
+      def load_database_configuration(stage, fallback:)
+        instance.database = load_yaml_files(stage: stage,
+                                            fallback: fallback,
+                                            paths: paths(database_files))
       end
 
-      def load_settings(stage)
-        settings = load_yaml_files(stage, *settings_files)
+      def load_settings(stage, fallback:)
+        settings = load_yaml_files(stage: stage,
+                                   fallback: fallback,
+                                   paths: paths(settings_files))
         settings.each_pair do |key, value|
           next if key.to_s == 'serverless'
 
           instance.send("#{key}=", value)
         end
+      end
+
+      def paths(files)
+        files.map { |file| SharkOnLambda.config.root.join(file) }
       end
     end
 

@@ -2,9 +2,7 @@
 
 module SharkOnLambda
   module YamlConfigLoader
-    protected
-
-    def load_yaml_files(stage, *paths)
+    def load_yaml_files(stage:, fallback: :default, paths:)
       result = HashWithIndifferentAccess.new
       paths.each do |path|
         next unless File.exist?(path)
