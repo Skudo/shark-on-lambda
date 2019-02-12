@@ -40,8 +40,8 @@ module SharkOnLambda
 
       protected
 
-      def controller_class
-        self.class.controller_class
+      def client_error?(error)
+        error.is_a?(Errors::Base) && (400..499).cover?(error.status)
       end
 
       def error_body(status, message)
@@ -67,17 +67,13 @@ module SharkOnLambda
       end
 
       def handle_error(error)
-        unless shark_error?(error)
+        unless client_error?(error)
           SharkOnLambda.logger.error(error.message)
           SharkOnLambda.logger.error(error.backtrace.join("\n"))
           ::Honeybadger.notify(error) if defined?(::Honeybadger)
         end
 
         error_response(error)
-      end
-
-      def shark_error?(error)
-        error.is_a?(Errors::Base)
       end
     end
   end
