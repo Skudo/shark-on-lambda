@@ -4,7 +4,7 @@ module SharkOnLambda
   class Configuration < OpenStruct
     include ResettableSingleton
 
-    attr_writer :root, :stage
+    attr_writer :stage
 
     class << self
       include YamlConfigLoader
@@ -45,7 +45,11 @@ module SharkOnLambda
     end
 
     def root
-      @root || '.'
+      @root ||= Pathname.new('.')
+    end
+
+    def root=(new_root)
+      @root = Pathname.new(new_root)
     end
 
     def stage

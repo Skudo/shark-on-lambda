@@ -131,7 +131,7 @@ end
 
 desc 'Remove package build directory.'
 task :clean do
-  package_dir = File.join(SharkOnLambda.root, 'pkg')
+  package_dir = SharkOnLambda.root.join('pkg')
   FileUtils.rm_rf(package_dir)
 end
 

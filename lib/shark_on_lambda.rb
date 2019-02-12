@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'ostruct'
+require 'pathname'
 require 'singleton'
 
 require 'doorkeeper/core'
@@ -91,8 +92,8 @@ module SharkOnLambda
     protected
 
     def run_initializers
-      initializers_path = File.join(root, 'config', 'initializers')
-      Dir.glob(File.join(initializers_path, '*.rb')).each do |path|
+      initializers_path = root.join('config', 'initializers')
+      Dir.glob(initializers_path.join('*.rb')).each do |path|
         load path
       end
     end
