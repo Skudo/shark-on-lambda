@@ -5,15 +5,22 @@ module SharkOnLambda
     def load_yaml_files(stage:, fallback: :default, paths:)
       result = HashWithIndifferentAccess.new
       paths.each do |path|
-        next unless File.exist?(path)
-
-        data = YAML.load_file(path)
-        next unless data.is_a?(Hash)
-
-        data = data.with_indifferent_access
-        result.deep_merge!(data[stage] || data[fallback] || {})
+        data = load_yaml_file(stage: stage, fallback: fallback, path: path)
+        result.deep_merge!(data)
       end
       result
+    end
+
+    protected
+
+    def load_yaml_file(stage:, fallback:, path:)
+      return {} unless File.exist?(path)
+
+      data = YAML.load_file(path)
+      return {} unless data.is_a?(Hash)
+
+      data = data.with_indifferent_access
+      data[stage] || data[fallback] || {}
     end
   end
 end
