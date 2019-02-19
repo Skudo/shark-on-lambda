@@ -4,6 +4,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'bundler/setup'
+require 'active_model'
 require 'factory_bot'
 require 'shark_on_lambda'
 

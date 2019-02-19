@@ -28,11 +28,13 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'bima-doorkeeper-rails', '~> 3.2'
-  spec.add_dependency 'bima-http', '~> 2.0'
+  spec.add_dependency 'activesupport'
   spec.add_dependency 'jsonapi-rb'
   spec.add_dependency 'rack'
 
+  # TODO: Do we really need `activemodel`?
+  #       Or can we get away with mocking out ::ActiveModel::Errors? 🤔
+  spec.add_development_dependency 'activemodel'
   spec.add_development_dependency 'bundler', '~> 1.17'
   spec.add_development_dependency 'factory_bot'
   spec.add_development_dependency 'rake', '~> 10.0'
