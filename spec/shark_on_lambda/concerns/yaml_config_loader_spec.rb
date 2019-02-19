@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::YamlConfigLoader do
+RSpec.describe SharkOnLambda::Concerns::YamlConfigLoader do
   let(:class_with_mixin) do
     Class.new do
-      include SharkOnLambda::YamlConfigLoader
+      include SharkOnLambda::Concerns::YamlConfigLoader
     end
   end
 

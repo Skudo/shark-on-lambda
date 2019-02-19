@@ -2,12 +2,12 @@
 
 module SharkOnLambda
   class Configuration < OpenStruct
-    include ResettableSingleton
+    include Concerns::ResettableSingleton
 
     attr_writer :stage
 
     class << self
-      include YamlConfigLoader
+      include Concerns::YamlConfigLoader
 
       attr_writer :database_files, :settings_files
 

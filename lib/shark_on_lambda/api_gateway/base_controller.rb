@@ -3,8 +3,8 @@
 module SharkOnLambda
   module ApiGateway
     class BaseController
-      include FilterActions
-      include HttpResponseValidation
+      include SharkOnLambda::Concerns::FilterActions
+      include Concerns::HttpResponseValidation
 
       attr_reader :event, :context
 

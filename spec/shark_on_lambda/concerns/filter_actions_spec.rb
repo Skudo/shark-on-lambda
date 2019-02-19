@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::FilterActions do
+RSpec.describe SharkOnLambda::Concerns::FilterActions do
   let(:class_with_mixin) do
     Class.new do
-      include SharkOnLambda::FilterActions
+      include SharkOnLambda::Concerns::FilterActions
 
       def my_method; end
 

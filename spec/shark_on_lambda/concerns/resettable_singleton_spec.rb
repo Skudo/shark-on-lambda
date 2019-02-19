@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ResettableSingleton do
+RSpec.describe SharkOnLambda::Concerns::ResettableSingleton do
   let(:class_with_mixin) do
     Class.new do
-      include SharkOnLambda::ResettableSingleton
+      include SharkOnLambda::Concerns::ResettableSingleton
     end
   end
 

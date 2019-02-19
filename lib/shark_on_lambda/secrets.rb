@@ -2,10 +2,10 @@
 
 module SharkOnLambda
   class Secrets < OpenStruct
-    include ResettableSingleton
+    include Concerns::ResettableSingleton
 
     class << self
-      include YamlConfigLoader
+      include Concerns::YamlConfigLoader
 
       attr_writer :files
 
