@@ -28,7 +28,7 @@ module SharkOnLambda
 
       def redirect_to(url, options = {})
         status = options[:status] || 307
-        validate_redirection_url!(url)
+        validate_url!(url)
         validate_redirection_status!(status)
 
         uri = URI.parse(url)
