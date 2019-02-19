@@ -3,8 +3,8 @@
 module SharkOnLambda
   module Inferrers
     class SerializerInferrer
-      def initialize(input)
-        @input = input
+      def initialize(object_class)
+        @object_class = object_class
       end
 
       def serializer_class
@@ -20,14 +20,12 @@ module SharkOnLambda
 
       protected
 
-      attr_reader :input
-
       def object_class
-        if input.is_a?(String) || input.is_a?(Symbol)
-          return input.to_s.camelize.constantize
+        unless @object_class.is_a?(String) || @object_class.is_a?(Symbol)
+          return @object_class
         end
 
-        input
+        @object_class.to_s.camelize.constantize
       end
 
       def serializer_class_names
