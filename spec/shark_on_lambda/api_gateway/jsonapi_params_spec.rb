@@ -42,7 +42,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiParameters do
           object_type_2: 'foo,bar'
         }
       end
-      let(:include_params) { 'foo,foo.bar,foo.baz,foo.bar.baz,bar.baz,baz.**' }
+      let(:include_params) { 'foo,foo.bar,foo.baz,foo.bar.baz,bar.baz,baz' }
 
       it 'processes the :fields parameter correctly' do
         expectation = {
@@ -57,9 +57,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiParameters do
           bar: {
             baz: {}
           },
-          baz: {
-            '**': {}
-          },
+          baz: {},
           foo: {
             bar: {
               baz: {}
