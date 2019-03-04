@@ -26,10 +26,29 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
     handler_class
   end
 
+  %i[index show].each do |action|
+    context "with an existing controller method ##{action}" do
+      describe ".#{action}" do
+        it 'calls the controller method' do
+          expect_any_instance_of(controller_class).to(
+            receive(:call).with(action)
+          )
+          subject.send(action, event: event, context: context)
+        end
+      end
+    end
+  end
+
   describe '.controller_class' do
     context 'without an explicitly assigned controller class' do
       context 'if the inferred controller class exists' do
-        subject { SharkOnLambda::ApiGateway::BaseHandler }
+        subject do
+          Class.new(SharkOnLambda::ApiGateway::BaseHandler) do
+            def self.name
+              'SharkOnLambda::ApiGateway::BaseHandler'
+            end
+          end
+        end
 
         it 'returns the inferred controller class' do
           expectation = SharkOnLambda::ApiGateway::BaseController
@@ -59,26 +78,10 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
     end
   end
 
-  describe '.defined_handler_methods!' do
-    it 'creates one class method for each controller action that calls them' do
-      known_actions = %i[index show]
-      expect(subject).to_not respond_to(*known_actions)
-
-      subject.define_handler_methods!
-      expect(subject).to respond_to(*known_actions)
-
-      known_actions.each do |action|
-        expect_any_instance_of(controller_class).to receive(action)
-        subject.send(action, controller_arguments)
-      end
-    end
-  end
-
   describe '#call' do
     subject do
       handler_class = SharkOnLambda::ApiGateway::BaseHandler
       handler_class.controller_class = controller_class
-      handler_class.define_handler_methods!
       handler_class.new
     end
 

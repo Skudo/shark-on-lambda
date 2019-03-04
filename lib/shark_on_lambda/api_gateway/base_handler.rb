@@ -14,13 +14,19 @@ module SharkOnLambda
           @controller_class = controller_class_name.safe_constantize
         end
 
-        def define_handler_methods!
-          known_actions.each do |action|
-            define_singleton_method(action) do |args|
-              instance = new
-              instance.call(action, args)
-            end
+        def method_missing(name, *args, &block)
+          return super unless respond_to_missing?(name)
+
+          define_singleton_method(name) do |method_args|
+            instance = new
+            instance.call(name, method_args)
           end
+
+          send(name, *args, &block)
+        end
+
+        def respond_to_missing?(name, _include_all = false)
+          known_actions.include?(name)
         end
 
         protected
