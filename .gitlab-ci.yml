@@ -1,7 +1,7 @@
 rspec:
   image: ruby:2.5
   script:
-    - gem install bundler
+    - gem install bundler -v '~> 1.17'
     - bundle install
     - bundle exec rake spec
 
