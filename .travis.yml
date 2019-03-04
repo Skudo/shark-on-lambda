@@ -11,5 +11,4 @@ install:
 
 script:
   - bundle exec rake spec
-  # TODO: Add documentation and remove the Style/Documentation exception.
-  - bundle exec rubocop --except Style/Documentation .
+  - bundle exec rubocop

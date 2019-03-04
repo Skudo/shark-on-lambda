@@ -10,3 +10,7 @@ Naming/FileName:
   Exclude:
     - lib/shark-on-lambda.rb
     - spec/shark-on-lambda_spec.rb
+
+# TODO: Add documentation and remove the Style/Documentation exception.
+Style/Documentation:
+  Enabled: false
