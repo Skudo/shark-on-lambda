@@ -14,6 +14,12 @@ module SharkOnLambda
           @controller_class = controller_class_name.safe_constantize
         end
 
+        protected
+
+        def known_actions
+          controller_class.public_instance_methods(false)
+        end
+
         def method_missing(name, *args, &block)
           return super unless respond_to_missing?(name)
 
@@ -23,12 +29,6 @@ module SharkOnLambda
 
         def respond_to_missing?(name, _include_all = false)
           known_actions.include?(name)
-        end
-
-        protected
-
-        def known_actions
-          controller_class.public_instance_methods(false)
         end
       end
 
