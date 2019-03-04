@@ -17,12 +17,8 @@ module SharkOnLambda
         def method_missing(name, *args, &block)
           return super unless respond_to_missing?(name)
 
-          define_singleton_method(name) do |method_args|
-            instance = new
-            instance.call(name, method_args)
-          end
-
-          send(name, *args, &block)
+          instance = new
+          instance.call(name, *args, &block)
         end
 
         def respond_to_missing?(name, _include_all = false)
