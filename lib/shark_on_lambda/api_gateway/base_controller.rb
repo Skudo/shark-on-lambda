@@ -6,7 +6,7 @@ module SharkOnLambda
       include SharkOnLambda::Concerns::FilterActions
       include Concerns::HttpResponseValidation
 
-      attr_reader :event, :context
+      attr_reader :action_name, :event, :context
 
       def initialize(event:, context:)
         @event = event
@@ -14,6 +14,7 @@ module SharkOnLambda
       end
 
       def call(method)
+        @action_name = method.to_s
         call_with_filter_actions(method)
         response.to_h
       end
