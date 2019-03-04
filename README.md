@@ -68,10 +68,8 @@ class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
 end
 ```
 
-Calling `.define_handler_methods!` creates the handler methods that serve as
-entry points for the Lambda function. It will look at the public instance
-methods of your controller and create class methods with the same name on the
-handler.
+All controller methods are going to be automagically mapped to class methods
+on the handler class. 
 
 ```ruby
 class MyController < SharkOnLambda::ApiGateway::BaseController
@@ -83,11 +81,10 @@ class MyController < SharkOnLambda::ApiGateway::BaseController
 end
 
 class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
-  define_handler_methods!
 end
 ```
 
-`MyHandler` will have `.index` and `.show` class methods that accept the
+`MyHandler` will respond to `.index` and `.show` class methods that accept the
 `event` and `context` objects from the API Gateway. Those are passed to 
 `MyController` and eventually, the controller method that corresponds to the
 handler class method is called.
