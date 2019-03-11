@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shark-on-lambda (0.6.1)
+    shark-on-lambda (0.6.2)
       activesupport
       jsonapi-rb
       rack
@@ -31,7 +31,7 @@ GEM
       jsonapi-deserializable (~> 0.2.0)
       jsonapi-serializable (~> 0.3.0)
     jsonapi-renderer (0.2.0)
-    jsonapi-serializable (0.3.0)
+    jsonapi-serializable (0.3.1)
       jsonapi-renderer (~> 0.2.0)
     minitest (5.11.3)
     parallel (1.13.0)
