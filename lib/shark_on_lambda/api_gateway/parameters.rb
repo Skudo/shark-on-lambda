@@ -3,7 +3,7 @@
 module SharkOnLambda
   module ApiGateway
     class Parameters
-      extend Forwardable
+      extend ::Forwardable
 
       def initialize(request)
         @params = ::HashWithIndifferentAccess.new

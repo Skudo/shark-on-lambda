@@ -38,7 +38,7 @@ require 'shark_on_lambda/api_gateway/response'
 # Top-level module for this gem.
 module SharkOnLambda
   class << self
-    extend Forwardable
+    extend ::Forwardable
 
     attr_writer :logger
 
