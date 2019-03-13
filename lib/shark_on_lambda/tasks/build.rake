@@ -111,7 +111,7 @@ end
 
   namespace :deploy do
     desc "Deploy this service to the '#{stage}' stage."
-    task stage => ["#{stage}:build"] do
+    task stage => ["build:#{stage}"] do
       deploy_stage(stage)
     end
   end
