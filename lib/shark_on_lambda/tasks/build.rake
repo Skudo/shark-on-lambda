@@ -105,7 +105,7 @@ end
   namespace :build do
     desc "Build this service for the '#{stage}' stage."
     task stage => [:clean] do
-      build_stage(args.stage)
+      build_stage(stage)
     end
   end
 
