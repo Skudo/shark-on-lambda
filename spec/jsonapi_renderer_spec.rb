@@ -86,7 +86,8 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiRenderer do
         expectation = object.map do |item|
           class_name = item.class.name
           "Could not find serializer for: #{class_name}."
-        end.uniq
+        end
+        expectation.uniq!
         expect(errors.map { |error| error[:detail] }).to eq(expectation)
       end
     end

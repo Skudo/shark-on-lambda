@@ -41,7 +41,9 @@ module SharkOnLambda
         const_set(class_name, error_class)
 
         [status_code, error_class]
-      end.compact.to_h
+      end
+      @errors.compact!
+      @errors = @errors.to_h
     end
   end
 end

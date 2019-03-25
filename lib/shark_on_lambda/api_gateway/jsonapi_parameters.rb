@@ -45,8 +45,10 @@ module SharkOnLambda
       def parse_fields_params(fields_params)
         return if fields_params.blank?
 
-        serialized_fields = fields_params.transform_values do |attributes|
-          attributes.split(',').map(&:strip).map(&:to_sym)
+        serialized_fields = fields_params.transform_values do |fields_param|
+          fields = fields_param.split(',')
+          fields.map!(&:strip)
+          fields.map!(&:to_sym)
         end
         fields(serialized_fields)
       end

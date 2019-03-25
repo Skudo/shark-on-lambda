@@ -21,11 +21,12 @@ RSpec.describe SharkOnLambda::ApiGateway::Parameters do
     }
   end
   let(:request) do
-    OpenStruct.new(
+    data = {
       path_parameters: path_parameters,
       query_parameters: query_parameters,
       request_parameters: request_parameters
-    )
+    }
+    Struct.new(*data.keys, keyword_init: true).new(data)
   end
 
   describe '.initialize' do

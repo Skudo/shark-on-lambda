@@ -11,6 +11,15 @@ Naming/FileName:
     - lib/shark-on-lambda.rb
     - spec/shark-on-lambda_spec.rb
 
+Performance/CaseWhenSplat:
+  Enabled: true
+
+Performance/ChainArrayAllocation:
+  Enabled: true
+
+Performance/OpenStruct:
+  Enabled: true
+
 # TODO: Add documentation and remove the Style/Documentation exception.
 Style/Documentation:
   Enabled: false

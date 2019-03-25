@@ -37,7 +37,8 @@ module SharkOnLambda
 
           name_inferrer = NameInferrer.from_model_name(ancestor_name)
           name_inferrer.serializer
-        end.compact
+        end
+        @serializer_class_names.compact! || @serializer_class_names
       end
     end
   end

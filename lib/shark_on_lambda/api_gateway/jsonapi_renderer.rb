@@ -25,6 +25,12 @@ module SharkOnLambda
 
       attr_reader :renderer
 
+      def active_model_error?(error)
+        return false unless defined?(::ActiveModel::Errors)
+
+        error.is_a?(::ActiveModel::Errors)
+      end
+
       def error?(object)
         if object.respond_to?(:to_ary)
           object.to_ary.any? { |item| item.is_a?(StandardError) }
@@ -74,17 +80,17 @@ module SharkOnLambda
       end
 
       def transform_active_model_errors(errors)
-        return errors unless defined?(::ActiveModel::Errors)
-        return errors unless errors.is_a?(::ActiveModel::Errors)
+        return errors unless active_model_error?(errors)
 
-        errors.messages.map do |attribute, attribute_errors|
+        result = errors.messages.map do |attribute, attribute_errors|
           attribute_errors.map do |attribute_error|
             error_message = "`#{attribute}' #{attribute_error}"
             Errors[422].new(error_message).tap do |error|
               error.pointer = "/data/attributes/#{attribute}"
             end
           end
-        end.flatten
+        end
+        result.flatten! || result
       end
 
       def unrenderable_objects(object, options)
