@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::Headers do
-  subject { SharkOnLambda::ApiGateway::Headers.new }
+RSpec.describe SharkOnLambda::Headers do
+  subject { SharkOnLambda::Headers.new }
 
   describe '#[]=' do
     it 'sets the given header (case-insensitive)' do

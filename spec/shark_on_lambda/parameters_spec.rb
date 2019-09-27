@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::Parameters do
+RSpec.describe SharkOnLambda::Parameters do
   let(:path_parameters) do
     {
       foo: 'foo from path_parameters',
@@ -30,7 +30,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Parameters do
   end
 
   describe '.initialize' do
-    subject { SharkOnLambda::ApiGateway::Parameters.new(request) }
+    subject { SharkOnLambda::Parameters.new(request) }
 
     it 'contains all parameters' do
       expectation = request_parameters.deep_dup
@@ -58,7 +58,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Parameters do
       expectation.merge!(path_parameters)
     end
 
-    subject { SharkOnLambda::ApiGateway::Parameters.new(request).as_json }
+    subject { SharkOnLambda::Parameters.new(request).as_json }
 
     it 'returns a hash with all parameters' do
       expect(subject).to eq(expectation)

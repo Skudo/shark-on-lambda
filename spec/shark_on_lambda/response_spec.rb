@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::Response do
-  let(:headers) { SharkOnLambda::ApiGateway::Headers.new }
+RSpec.describe SharkOnLambda::Response do
+  let(:headers) { SharkOnLambda::Headers.new }
 
-  subject { SharkOnLambda::ApiGateway::Response.new(headers: headers) }
+  subject { SharkOnLambda::Response.new(headers: headers) }
 
   describe '.default_charset' do
-    subject { SharkOnLambda::ApiGateway::Response.default_charset }
+    subject { SharkOnLambda::Response.default_charset }
 
     it 'returns the default charset' do
       expect(subject).to eq('utf-8')
@@ -14,7 +14,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Response do
   end
 
   describe '.default_content_type' do
-    subject { SharkOnLambda::ApiGateway::Response.default_content_type }
+    subject { SharkOnLambda::Response.default_content_type }
 
     it 'returns the default content type' do
       expect(subject).to eq('application/vnd.api+json')
@@ -127,7 +127,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Response do
     context 'with a response body' do
       let(:body) { 'Hello, world!' }
       subject do
-        response = SharkOnLambda::ApiGateway::Response.new(headers: headers)
+        response = SharkOnLambda::Response.new(headers: headers)
         response.body = body
         response
       end

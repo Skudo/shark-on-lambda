@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::Request do
+RSpec.describe SharkOnLambda::Request do
   let(:authorization_header) { 'Bearer asdf' }
   let(:context) { build(:api_gateway_context) }
   let(:base_event) do
@@ -9,7 +9,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Request do
   let(:event) { base_event }
 
   subject do
-    SharkOnLambda::ApiGateway::Request.new(event: event, context: context)
+    SharkOnLambda::Request.new(event: event, context: context)
   end
 
   describe '#authorization' do
@@ -326,7 +326,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Request do
       let(:body) { 'Hello, world!' }
 
       it 'throws a "Bad Request" exception' do
-        expectation = SharkOnLambda::ApiGateway::Errors[400]
+        expectation = SharkOnLambda::Errors[400]
         expect { subject.request_parameters }.to raise_error(expectation)
       end
     end
@@ -335,7 +335,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Request do
       let(:body) { '[]' }
 
       it 'throws a "Bad Request" exception' do
-        expectation = SharkOnLambda::ApiGateway::Errors[400]
+        expectation = SharkOnLambda::Errors[400]
         expect { subject.request_parameters }.to raise_error(expectation)
       end
     end

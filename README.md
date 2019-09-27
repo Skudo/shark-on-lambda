@@ -50,11 +50,11 @@ are triggered by HTTP requests on the API Gateway. They also are responsible for
 responding with a well-formed response to the caller.
 
 ```ruby
-class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
+class MyHandler < SharkOnLambda::BaseHandler
 end
 ```
 
-By inheriting from `SharkOnLambda::ApiGateway::BaseHandler`, your own handler
+By inheriting from `SharkOnLambda::BaseHandler`, your own handler
 class is indirectly tied to your controller class by convention: It assumes 
 the controller name is `MyController` and it will dispatch events to that
 controller.
@@ -63,7 +63,7 @@ If you however bring your own class with a different name, you can configure
 your handler to use that controller instead:
 
 ```ruby
-class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
+class MyHandler < SharkOnLambda::BaseHandler
   self.controller_class = AnotherController
 end
 ```
@@ -72,7 +72,7 @@ All controller methods are going to be automagically mapped to class methods
 on the handler class. 
 
 ```ruby
-class MyController < SharkOnLambda::ApiGateway::BaseController
+class MyController < SharkOnLambda::BaseController
   def index
   end
   
@@ -80,7 +80,7 @@ class MyController < SharkOnLambda::ApiGateway::BaseController
   end
 end
 
-class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
+class MyHandler < SharkOnLambda::BaseHandler
 end
 ```
 
@@ -103,7 +103,7 @@ functions you may know from Rails and `render` does not really support multiple
 renderers (yet).
 
 ```ruby
-class MyController < SharkOnLambda::ApiGateway::BaseController
+class MyController < SharkOnLambda::BaseController
   def index
     # Make the API Gateway respond with a 201 response saying "Hello, World!"
     # in the response body.
@@ -124,7 +124,7 @@ end
 ### _JSON API_-compliant controllers
 
 If you inherit your controller from 
-`SharkOnLambda::ApiGateway::JsonapiController`, `render` and `redirect_to` will
+`SharkOnLambda::JsonapiController`, `render` and `redirect_to` will
 create _JSON API_-compliant responses.
 
 You however __must__ have a serialiser for the objects you want to render.

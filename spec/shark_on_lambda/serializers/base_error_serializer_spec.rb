@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::Errors::BaseSerializer do
+RSpec.describe SharkOnLambda::Errors::BaseSerializer do
   let(:error_message) { 'To err or not to err, that is the question.' }
   let(:error_attributes) do
     {
@@ -19,7 +19,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Errors::BaseSerializer do
     }
   end
   let(:error) do
-    error_class = Class.new(SharkOnLambda::ApiGateway::Errors::Base) do
+    error_class = Class.new(SharkOnLambda::Errors::Base) do
       status 415
     end
     error_class.new(error_message).tap do |error|
@@ -30,7 +30,7 @@ RSpec.describe SharkOnLambda::ApiGateway::Errors::BaseSerializer do
 
   context '#as_jsonapi' do
     subject do
-      serializer = SharkOnLambda::ApiGateway::Errors::BaseSerializer.new(
+      serializer = SharkOnLambda::Errors::BaseSerializer.new(
         object: error
       )
       serializer.as_jsonapi
