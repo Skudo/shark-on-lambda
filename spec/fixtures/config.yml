@@ -1,0 +1,17 @@
+default:
+  host: apigateway.aws.com
+  port: 443
+
+development:
+  host: localhost
+  port: 8080
+  credentials:
+    username: 'test'
+
+staging:
+  host: staging.example.com
+  port: 443
+
+production:
+  host: example.com
+  port: 443

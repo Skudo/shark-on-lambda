@@ -1,0 +1,3 @@
+development:
+  credentials:
+    password: 'secret-password'
