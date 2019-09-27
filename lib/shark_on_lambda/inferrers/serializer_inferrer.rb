@@ -2,11 +2,24 @@
 
 module SharkOnLambda
   module Inferrers
+    # Determines the serialiser class for a given class.
     class SerializerInferrer
+      # Returns a new instance of SerializerInferrer with the given
+      # *object_class*.
+      #
+      # @param object_class [Class, String, Symbol] Class to determine the
+      #                                             serialiser for.
       def initialize(object_class)
         @object_class = object_class
       end
 
+      # Returns the inferred serialiser class: the serialiser class
+      # for exactly *object_class*, for the ancestor closest to *object_class*,
+      # or *nil*, whichever comes first.
+      #
+      # @return [Class] If a serialiser class for *object_class* exists.
+      # @return [NilClass] If a serialiser class for *object_class* could not
+      #                     be fonud.
       def serializer_class
         return @serializer_class if defined?(@serializer_class)
 

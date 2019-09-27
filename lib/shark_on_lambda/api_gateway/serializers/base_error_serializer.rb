@@ -3,6 +3,8 @@
 module SharkOnLambda
   module ApiGateway
     module Errors
+      # Implements the serializer for error instances based on
+      # SharkOnLambda::ApiGateway::Errors::Base.
       class BaseSerializer < ::JSONAPI::Serializable::Error
         id { @object.id }
         status { @object.status }
