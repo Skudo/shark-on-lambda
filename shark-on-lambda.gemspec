@@ -11,8 +11,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Huy Dinh']
   spec.email         = ['mail@huydinh.eu']
 
-  spec.summary       = 'Deploy your Ruby application to AWS Lambda'
-  spec.description   = 'Version 0.0.0 is a dummy gem without any functionality!'
+  spec.summary       = 'Write beautiful Ruby applications for AWS Lambda'
+  spec.description   = '`shark-on-lambda` does the heavy lifting for writing ' \
+                       'web services based on AWS API Gateway on AWS Lambda ' \
+                       'using Ruby.'
   spec.homepage      = 'https://gitlab.com/skudo/shark-on-lambda'
   spec.license       = 'MIT'
 
@@ -35,10 +37,10 @@ Gem::Specification.new do |spec|
   # TODO: Do we really need `activemodel`?
   #       Or can we get away with mocking out ::ActiveModel::Errors?
   spec.add_development_dependency 'activemodel'
-  spec.add_development_dependency 'bundler', '~> 1.17'
+  spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'factory_bot'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'yard'
