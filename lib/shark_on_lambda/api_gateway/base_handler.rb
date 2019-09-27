@@ -36,8 +36,8 @@ module SharkOnLambda
         controller_class = self.class.controller_class
         controller = controller_class.new(event: event, context: context)
         controller.call(action)
-      rescue StandardError => error
-        handle_error(error)
+      rescue StandardError => e
+        handle_error(e)
       end
 
       protected
