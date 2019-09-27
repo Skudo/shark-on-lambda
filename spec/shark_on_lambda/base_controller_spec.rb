@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::BaseController do
+RSpec.describe SharkOnLambda::BaseController do
   let(:event) { attributes_for(:api_gateway_event) }
   let(:context) { build(:api_gateway_context) }
 
   subject do
-    SharkOnLambda::ApiGateway::BaseController.new(event: event,
-                                                  context: context)
+    SharkOnLambda::BaseController.new(event: event, context: context)
   end
 
   describe '#call' do
     let(:controller_class) do
-      Class.new(SharkOnLambda::ApiGateway::BaseController) do
+      Class.new(SharkOnLambda::BaseController) do
         before_action :before_action_method
         after_action :after_action_method
 
@@ -38,7 +37,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
   describe '#params' do
     it 'returns a Parameters object' do
-      expectation = SharkOnLambda::ApiGateway::Parameters
+      expectation = SharkOnLambda::Parameters
       expect(subject.params).to be_a(expectation)
     end
   end
@@ -48,7 +47,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
     context 'if #redirect_to has been called before' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.redirect_to(url)
         expect { subject.redirect_to(url) }.to raise_error(expectation)
@@ -57,7 +56,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
     context 'if #render has been called before' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.render('')
         expect { subject.redirect_to(url) }.to raise_error(expectation)
@@ -66,7 +65,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
     context 'with an unparsable redirection URL' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         [nil, '', '\foo', '"bar"', 'foo bar'].each do |url|
           expect { subject.redirect_to(url) }.to raise_error(expectation)
@@ -92,7 +91,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
     context 'with a non-3xx status code' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         [nil, 0, 100, 200, 400, 500].each do |status|
           expect do
@@ -142,7 +141,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
       let(:url) { 'https://example.com' }
 
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.redirect_to(url)
         expect { subject.render(body) }.to raise_error(expectation)
@@ -151,7 +150,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
     context 'if #render has been called before' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.render(body)
         expect { subject.render(body) }.to raise_error(expectation)
@@ -161,14 +160,14 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseController do
 
   describe '#request' do
     it 'returns a Request object' do
-      expectation = SharkOnLambda::ApiGateway::Request
+      expectation = SharkOnLambda::Request
       expect(subject.request).to be_a(expectation)
     end
   end
 
   describe '#response' do
     it 'returns a Response object' do
-      expectation = SharkOnLambda::ApiGateway::Response
+      expectation = SharkOnLambda::Response
       expect(subject.response).to be_a(expectation)
     end
   end

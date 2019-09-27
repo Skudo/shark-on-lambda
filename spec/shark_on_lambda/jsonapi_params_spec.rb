@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::JsonapiParameters do
+RSpec.describe SharkOnLambda::JsonapiParameters do
   let(:class_params) { nil }
   let(:fields_params) { nil }
   let(:include_params) { nil }
@@ -12,19 +12,19 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiParameters do
     }
   end
 
-  subject { SharkOnLambda::ApiGateway::JsonapiParameters.new(params) }
+  subject { SharkOnLambda::JsonapiParameters.new(params) }
   let(:jsonapi_params) { subject.to_h }
 
   it 'infers the right serializer classes, if they exist' do
-    object_class = SharkOnLambda::ApiGateway::Errors::Base
+    object_class = SharkOnLambda::Errors::Base
     object_class_symbol = object_class.name.to_sym
-    serializer_class = SharkOnLambda::ApiGateway::Errors::BaseSerializer
+    serializer_class = SharkOnLambda::Errors::BaseSerializer
     expect(jsonapi_params[:class][object_class_symbol]).to eq(serializer_class)
   end
 
   describe '.new' do
     context 'without any JSON API parameters' do
-      subject { SharkOnLambda::ApiGateway::JsonapiParameters.new }
+      subject { SharkOnLambda::JsonapiParameters.new }
 
       it 'sets default values' do
         expect(jsonapi_params[:class]).to be_a(HashWithIndifferentAccess)
@@ -71,7 +71,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiParameters do
   end
 
   describe '#classes' do
-    let(:serializer_class) { SharkOnLambda::ApiGateway::Errors::BaseSerializer }
+    let(:serializer_class) { SharkOnLambda::Errors::BaseSerializer }
     let(:previously_known_classes) do
       {
         Exception: STDOUT

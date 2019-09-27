@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
+RSpec.describe SharkOnLambda::JsonapiController do
   let(:event) { attributes_for(:api_gateway_event) }
   let(:context) { build(:api_gateway_context) }
 
   subject do
-    SharkOnLambda::ApiGateway::JsonapiController.new(event: event,
-                                                     context: context)
+    SharkOnLambda::JsonapiController.new(event: event, context: context)
   end
 
   it 'is a direct successor to BaseController' do
-    subject = SharkOnLambda::ApiGateway::JsonapiController
+    subject = SharkOnLambda::JsonapiController
     expectation = [
       subject,
-      SharkOnLambda::ApiGateway::BaseController
+      SharkOnLambda::BaseController
     ]
     expect(subject.ancestors[0..1]).to eq(expectation)
   end
@@ -40,7 +39,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
 
     context 'if #redirect_to has been called before' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.redirect_to(url)
         expect { subject.redirect_to(url) }.to raise_error(expectation)
@@ -49,7 +48,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
 
     context 'if #render has been called before' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.render('')
         expect { subject.redirect_to(url) }.to raise_error(expectation)
@@ -58,7 +57,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
 
     context 'with an unparsable redirection URL' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         [nil, '', '\foo', '"bar"', 'foo bar'].each do |url|
           expect { subject.redirect_to(url) }.to raise_error(expectation)
@@ -84,7 +83,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
 
     context 'with a non-3xx status code' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         [0, 100, 200, 400, 500].each do |status|
           expect do
@@ -134,7 +133,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
       let(:url) { 'https://example.com' }
 
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.redirect_to(url)
         expect { subject.render(body) }.to raise_error(expectation)
@@ -143,7 +142,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiController do
 
     context 'if #render has been called before' do
       it 'raises an Internal Server Error' do
-        expectation = SharkOnLambda::ApiGateway::Errors[500]
+        expectation = SharkOnLambda::Errors[500]
 
         subject.render(body)
         expect { subject.render(body) }.to raise_error(expectation)

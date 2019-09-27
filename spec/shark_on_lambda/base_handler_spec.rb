@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
+RSpec.describe SharkOnLambda::BaseHandler do
   let(:event) { attributes_for(:api_gateway_event) }
   let(:context) { build(:api_gateway_context) }
   let(:controller_arguments) do
@@ -10,7 +10,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
     }
   end
   let(:controller_class) do
-    Class.new(SharkOnLambda::ApiGateway::BaseController) do
+    Class.new(SharkOnLambda::BaseController) do
       def index; end
 
       def show
@@ -21,7 +21,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
   let(:controller_instance) { controller_class.new(controller_arguments) }
 
   subject do
-    handler_class = SharkOnLambda::ApiGateway::BaseHandler
+    handler_class = SharkOnLambda::BaseHandler
     handler_class.controller_class = controller_class
     handler_class
   end
@@ -43,22 +43,22 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
     context 'without an explicitly assigned controller class' do
       context 'if the inferred controller class exists' do
         subject do
-          Class.new(SharkOnLambda::ApiGateway::BaseHandler) do
+          Class.new(SharkOnLambda::BaseHandler) do
             def self.name
-              'SharkOnLambda::ApiGateway::BaseHandler'
+              'SharkOnLambda::BaseHandler'
             end
           end
         end
 
         it 'returns the inferred controller class' do
-          expectation = SharkOnLambda::ApiGateway::BaseController
+          expectation = SharkOnLambda::BaseController
           expect(subject.controller_class).to eq(expectation)
         end
       end
 
       context 'if the inferred controller class does not exist' do
         subject do
-          Class.new(SharkOnLambda::ApiGateway::BaseHandler) do
+          Class.new(SharkOnLambda::BaseHandler) do
             def self.name
               'WeirdHandler'
             end
@@ -80,7 +80,7 @@ RSpec.describe SharkOnLambda::ApiGateway::BaseHandler do
 
   describe '#call' do
     subject do
-      handler_class = SharkOnLambda::ApiGateway::BaseHandler
+      handler_class = SharkOnLambda::BaseHandler
       handler_class.controller_class = controller_class
       handler_class.new
     end

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGateway::JsonapiRenderer do
+RSpec.describe SharkOnLambda::JsonapiRenderer do
   class CustomObject; end
   class CustomObjectSerializer; end
 
   let(:renderer) { ::JSONAPI::Serializable::Renderer.new }
-  let(:params) { SharkOnLambda::ApiGateway::JsonapiParameters.new.to_h }
+  let(:params) { SharkOnLambda::JsonapiParameters.new.to_h }
 
   describe '#render' do
     subject do
-      instance = SharkOnLambda::ApiGateway::JsonapiRenderer.new(
+      instance = SharkOnLambda::JsonapiRenderer.new(
         renderer: renderer
       )
       instance.render(object, params)
@@ -34,7 +34,7 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiRenderer do
     end
 
     context 'with a serializable error object' do
-      let(:object) { SharkOnLambda::ApiGateway::Errors::Base.new }
+      let(:object) { SharkOnLambda::Errors::Base.new }
 
       it 'renders the error object using the renderer' do
         expect(renderer).to receive(:render_errors).with([object], params.to_h)
@@ -45,8 +45,8 @@ RSpec.describe SharkOnLambda::ApiGateway::JsonapiRenderer do
     context 'with an array of serializable error objects' do
       let(:object) do
         [
-          SharkOnLambda::ApiGateway::Errors::Base.new,
-          SharkOnLambda::ApiGateway::Errors::Base.new
+          SharkOnLambda::Errors::Base.new,
+          SharkOnLambda::Errors::Base.new
         ]
       end
 
