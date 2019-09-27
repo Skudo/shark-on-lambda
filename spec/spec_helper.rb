@@ -1,7 +1,20 @@
+# frozen_string_literal: true
+
+require 'simplecov'
+SimpleCov.start
+
 require 'bundler/setup'
-require 'shark-on-lambda'
+require 'active_model'
+require 'factory_bot'
+require 'shark_on_lambda'
 
 RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
+  end
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
 
