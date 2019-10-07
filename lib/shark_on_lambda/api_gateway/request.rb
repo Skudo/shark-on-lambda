@@ -140,7 +140,7 @@ module SharkOnLambda
         return @query_string if defined?(@query_string)
 
         query_string_parameters = event['multiValueQueryStringParameters'] || {}
-        @query_string = ::Rack::Utils.build_query(query_string_parameters)
+        @query_string = Rack::Utils.build_nested_query(query_string_parameters)
       end
     end
   end
