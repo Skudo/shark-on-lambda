@@ -122,8 +122,8 @@ module SharkOnLambda
         data = JSON.parse(raw_post)
         @request_parameters = HashWithIndifferentAccess.new
         @request_parameters = @request_parameters.merge(data)
-      rescue JSON::ParserError => error
-        raise Errors[400], error.message
+      rescue JSON::ParserError => e
+        raise Errors[400], e.message
       rescue StandardError
         raise Errors[400], 'The request body must be empty or a JSON object.'
       end
@@ -140,7 +140,7 @@ module SharkOnLambda
         return @query_string if defined?(@query_string)
 
         query_string_parameters = event['multiValueQueryStringParameters'] || {}
-        @query_string = ::Rack::Utils.build_query(query_string_parameters)
+        @query_string = Rack::Utils.build_nested_query(query_string_parameters)
       end
     end
   end

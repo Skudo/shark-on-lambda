@@ -21,7 +21,8 @@ FactoryBot.define do
     end
     multiValueQueryStringParameters do
       {
-        'foo[]': %w[bar baz]
+        'foo': %w[bar baz],
+        'top[nested][nested_value]': 'value'
       }
     end
     pathParameters do

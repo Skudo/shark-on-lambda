@@ -124,7 +124,8 @@ RSpec.describe SharkOnLambda::ApiGateway::Request do
 
     context 'with a query string' do
       it 'returns the request path including a query string' do
-        expectation = "#{event[:path]}?foo%5B%5D=bar&foo%5B%5D=baz"
+        expectation = "#{event[:path]}?foo[]=bar&foo[]=baz" \
+                      '&top%5Bnested%5D%5Bnested_value%5D=value'
         expect(subject.fullpath).to eq(expectation)
       end
     end
@@ -236,7 +237,8 @@ RSpec.describe SharkOnLambda::ApiGateway::Request do
   describe '#original_url' do
     it 'returns the full URI of the request' do
       expectation = 'https://test.local/api/v1/mailing/1234' \
-                    '?foo%5B%5D=bar&foo%5B%5D=baz'
+                    '?foo[]=bar&foo[]=baz' \
+                    '&top%5Bnested%5D%5Bnested_value%5D=value'
       expect(subject.original_url).to eq(expectation)
     end
   end
@@ -274,7 +276,12 @@ RSpec.describe SharkOnLambda::ApiGateway::Request do
     context 'with query string parameters' do
       it 'returns a hash containing all query string parameters' do
         expectation = {
-          'foo' => %w[bar baz]
+          'foo' => %w[bar baz],
+          'top' => {
+            'nested' => {
+              'nested_value' => 'value'
+            }
+          }
         }
         expect(subject.query_parameters).to eq(expectation)
       end
