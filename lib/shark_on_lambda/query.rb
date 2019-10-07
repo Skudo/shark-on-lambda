@@ -27,8 +27,13 @@ module SharkOnLambda
   #
   # are _not_ to be treated the same.
   class Query
-    def initialize
-      @params = HashWithIndifferentAccess.new
+    def self.from_query_string(query_string)
+      data = Rack::Utils.parse_nested_query(query_string)
+      new(data)
+    end
+
+    def initialize(data = {})
+      @params = HashWithIndifferentAccess.new.merge(data)
     end
 
     def add(key, values)

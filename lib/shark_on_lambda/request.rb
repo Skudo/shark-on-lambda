@@ -95,12 +95,7 @@ module SharkOnLambda
     def query_parameters
       return @query_parameters if defined?(@query_parameters)
 
-      # We have to jump through the Rack::Utils hoops here, because the event
-      # object from the AWS Gateway deserialises the query string in a "wrong"
-      # way, so we need to put it back together and deserialise it with
-      # Rack::Utils.parse_nested_query.
-      data = Rack::Utils.parse_nested_query(query_string)
-      @query_parameters = HashWithIndifferentAccess.new.merge(data)
+      @query_parameters = Query.from_query_string(query_string).to_h
     end
     alias GET query_parameters
 
