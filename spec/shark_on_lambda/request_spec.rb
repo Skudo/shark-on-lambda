@@ -124,8 +124,11 @@ RSpec.describe SharkOnLambda::Request do
 
     context 'with a query string' do
       it 'returns the request path including a query string' do
-        expectation = "#{event[:path]}?foo[]=bar&foo[]=baz" \
-                      '&top%5Bnested%5D%5Bnested_value%5D=value'
+        expectation = "#{event[:path]}" \
+                      '?foo=foo' \
+                      '&bar[]=bar&bar[]=baz' \
+                      '&top%5Bnested%5D%5Bnested_value%5D=value' \
+                      '&top%5Bnested%5D%5Bnested_array%5D[]=1'
         expect(subject.fullpath).to eq(expectation)
       end
     end
@@ -237,8 +240,10 @@ RSpec.describe SharkOnLambda::Request do
   describe '#original_url' do
     it 'returns the full URI of the request' do
       expectation = 'https://test.local/api/v1/mailing/1234' \
-                    '?foo[]=bar&foo[]=baz' \
-                    '&top%5Bnested%5D%5Bnested_value%5D=value'
+                    '?foo=foo' \
+                    '&bar[]=bar&bar[]=baz' \
+                    '&top%5Bnested%5D%5Bnested_value%5D=value' \
+                    '&top%5Bnested%5D%5Bnested_array%5D[]=1'
       expect(subject.original_url).to eq(expectation)
     end
   end
@@ -276,9 +281,11 @@ RSpec.describe SharkOnLambda::Request do
     context 'with query string parameters' do
       it 'returns a hash containing all query string parameters' do
         expectation = {
-          'foo' => %w[bar baz],
+          'foo' => 'foo',
+          'bar' => %w[bar baz],
           'top' => {
             'nested' => {
+              'nested_array' => %w[1],
               'nested_value' => 'value'
             }
           }

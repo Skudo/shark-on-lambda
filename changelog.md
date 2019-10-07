@@ -4,6 +4,10 @@
 
 - Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
 
+#### 0.6.6
+
+- [Fix] Handle the quirkiness of API Gateway query strings properly.
+
 #### 0.6.5
 
 - [Fix] Parse nested query string parameters correctly.

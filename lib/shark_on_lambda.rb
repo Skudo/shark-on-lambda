@@ -34,6 +34,7 @@ require 'shark_on_lambda/jsonapi_controller'
 require 'shark_on_lambda/jsonapi_parameters'
 require 'shark_on_lambda/jsonapi_renderer'
 require 'shark_on_lambda/parameters'
+require 'shark_on_lambda/query'
 require 'shark_on_lambda/request'
 require 'shark_on_lambda/response'
 

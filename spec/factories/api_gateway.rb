@@ -14,16 +14,16 @@ FactoryBot.define do
     multiValueHeaders do
       headers.transform_values { |value| Array(value) }
     end
-    queryStringParameters do
-      {
-        'foo[]': 'baz'
-      }
-    end
     multiValueQueryStringParameters do
       {
-        'foo': %w[bar baz],
-        'top[nested][nested_value]': 'value'
+        'foo': %w[foo],
+        'bar': %w[bar baz],
+        'top[nested][nested_value]': %w[value],
+        'top[nested][nested_array][]': %w[1]
       }
+    end
+    queryStringParameters do
+      multiValueQueryStringParameters.transform_values(&:first)
     end
     pathParameters do
       {
