@@ -83,8 +83,7 @@ module SharkOnLambda
 
       def original_url
         hostname = event['requestContext']['domainName']
-        uri = URI.join("https://#{hostname}", original_fullpath)
-        uri.to_s
+        URI.join("https://#{hostname}", original_fullpath).to_s
       end
 
       def path_parameters
@@ -120,8 +119,7 @@ module SharkOnLambda
         return {} if raw_post.blank?
 
         data = JSON.parse(raw_post)
-        @request_parameters = HashWithIndifferentAccess.new
-        @request_parameters = @request_parameters.merge(data)
+        @request_parameters = HashWithIndifferentAccess.new.merge(data)
       rescue JSON::ParserError => e
         raise Errors[400], e.message
       rescue StandardError
@@ -139,8 +137,11 @@ module SharkOnLambda
       def query_string
         return @query_string if defined?(@query_string)
 
-        query_string_parameters = event['multiValueQueryStringParameters'] || {}
-        @query_string = Rack::Utils.build_nested_query(query_string_parameters)
+        query = Query.new
+        event['multiValueQueryStringParameters']&.each_pair do |key, value|
+          query.add(key, value)
+        end
+        @query_string = query.to_s
       end
     end
   end

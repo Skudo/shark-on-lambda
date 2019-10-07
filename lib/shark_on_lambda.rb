@@ -33,6 +33,7 @@ require 'shark_on_lambda/api_gateway/jsonapi_controller'
 require 'shark_on_lambda/api_gateway/jsonapi_parameters'
 require 'shark_on_lambda/api_gateway/jsonapi_renderer'
 require 'shark_on_lambda/api_gateway/parameters'
+require 'shark_on_lambda/api_gateway/query'
 require 'shark_on_lambda/api_gateway/request'
 require 'shark_on_lambda/api_gateway/response'
 
