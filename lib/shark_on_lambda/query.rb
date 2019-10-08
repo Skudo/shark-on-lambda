@@ -37,7 +37,7 @@ module SharkOnLambda
     end
 
     def add(key, values)
-      if key.end_with?('[]')
+      if key.to_s.end_with?('[]')
         actual_key = key[0..-3]
         add_list(actual_key, values)
       else
