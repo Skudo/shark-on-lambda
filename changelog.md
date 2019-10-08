@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.6.7
+
+- [Fix] Build 0.6.6 using the wrong branch.
+
 #### 0.6.6
 
 - [Fix] Handle the quirkiness of API Gateway query strings properly.
