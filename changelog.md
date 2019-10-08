@@ -1,5 +1,10 @@
 ## Changelog
 
+#### 0.6.8
+
+- [Fix] `Query` breaks when adding an item with a symbol as a key.
+- Set up the GitLab build pipeline.
+
 #### 0.6.7
 
 - [Fix] Build 0.6.6 using the wrong branch.
