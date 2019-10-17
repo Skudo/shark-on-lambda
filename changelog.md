@@ -2,6 +2,7 @@
 
 #### Unreleaesed
 
+- `SharkOnLambda::BaseController` knows `.rescue_from`, `.rescue_with_handler`, and `#rescue_with_handler` from `ActiveSupport::Rescuable`
 - Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
 
 #### 0.6.9
