@@ -2,6 +2,7 @@
 
 module SharkOnLambda
   class BaseController
+    include ::ActiveSupport::Rescuable
     include SharkOnLambda::Concerns::FilterActions
     include Concerns::HttpResponseValidation
 
@@ -14,7 +15,13 @@ module SharkOnLambda
 
     def call(method)
       @action_name = method.to_s
-      call_with_filter_actions(method)
+
+      begin
+        call_with_filter_actions(method)
+      rescue StandardError => e
+        rescue_with_handler(e) || raise(e)
+      end
+
       response.to_h
     end
 

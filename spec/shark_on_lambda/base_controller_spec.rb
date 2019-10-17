@@ -16,14 +16,39 @@ RSpec.describe SharkOnLambda::BaseController do
 
         attr_accessor :called_functions
 
+        rescue_from HandledException do
+        end
+
         %i[after_action_method before_action_method index].each do |method|
           define_singleton_method(method) do
           end
         end
+
+        def explode_with_handled_exception
+          raise HandledException
+        end
+
+        def explode_with_unhandled_exception
+          raise UnhandledException
+        end
+
+        def after_action_method; end
+
+        def before_action_method; end
       end
     end
 
     subject { controller_class.new(event: event, context: context) }
+
+    after do
+      Object.send(:remove_const, :HandledException)
+      Object.send(:remove_const, :UnhandledException)
+    end
+
+    before do
+      class HandledException < StandardError; end
+      class UnhandledException < StandardError; end
+    end
 
     context 'if the controller method exists' do
       it 'calls the controller method with filter actions' do
@@ -31,6 +56,25 @@ RSpec.describe SharkOnLambda::BaseController do
         expect(subject).to receive(:index).once
         expect(subject).to receive(:after_action_method).once
         subject.call(:index)
+      end
+    end
+
+    context 'when an exception is thrown' do
+      context 'if `rescue_from` knows about that exception' do
+        it 'delegates the handling to #rescue_with_handler' do
+          expect(subject).to(
+            receive(:rescue_with_handler).with(an_instance_of(HandledException))
+          ).and_call_original
+          subject.call(:explode_with_handled_exception)
+        end
+      end
+
+      context 'if `rescue_from` does not know about that exception' do
+        it 'raises the exception' do
+          expect { subject.call(:explode_with_unhandled_exception) }.to(
+            raise_error(UnhandledException)
+          )
+        end
       end
     end
   end
