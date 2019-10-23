@@ -4,6 +4,19 @@
 
 - Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
 
+#### 0.6.9
+
+- [Fix] Controllers now execute their parents' `before_actions` and `after_actions`.
+
+#### 0.6.8
+
+- [Fix] `Query` breaks when adding an item with a symbol as a key.
+- Set up the GitLab build pipeline.
+
+#### 0.6.7
+
+- [Fix] Build 0.6.6 using the wrong branch.
+
 #### 0.6.6
 
 - [Fix] Handle the quirkiness of API Gateway query strings properly.
