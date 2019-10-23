@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.6.9
+
+- [Fix] Controllers now execute their parents' `before_actions` and `after_actions`.
+
 #### 0.6.8
 
 - [Fix] `Query` breaks when adding an item with a symbol as a key.
