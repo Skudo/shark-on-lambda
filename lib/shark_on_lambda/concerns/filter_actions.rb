@@ -18,7 +18,7 @@ module SharkOnLambda
         end
 
         def after_actions
-          @after_actions || []
+          collect_from_ancestors(:after_actions) + Array(@after_actions)
         end
 
         def before_action(symbol, only: [], except: [])
@@ -31,7 +31,18 @@ module SharkOnLambda
         end
 
         def before_actions
-          @before_actions || []
+          collect_from_ancestors(:before_actions) + Array(@before_actions)
+        end
+
+        private
+
+        def collect_from_ancestors(method)
+          ancestors_without_self = ancestors[1..-1]
+          return [] if ancestors_without_self.empty?
+
+          ancestors_without_self.map! { |ancestor| ancestor.try(method) }
+          ancestors_without_self.compact!
+          ancestors_without_self.reduce([], &:+)
         end
       end
 
