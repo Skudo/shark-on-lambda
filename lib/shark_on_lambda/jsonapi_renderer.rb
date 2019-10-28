@@ -30,6 +30,14 @@ module SharkOnLambda
       error.is_a?(::ActiveModel::Errors)
     end
 
+    def attribute_name(attribute)
+      File.basename(attribute_path(attribute))
+    end
+
+    def attribute_path(attribute)
+      attribute.to_s.tr('.', '/').gsub(/\[(\d+)\]/, '/\1')
+    end
+
     def error?(object)
       if object.respond_to?(:to_ary)
         object.to_ary.any? { |item| item.is_a?(StandardError) }
@@ -83,9 +91,9 @@ module SharkOnLambda
 
       result = errors.messages.map do |attribute, attribute_errors|
         attribute_errors.map do |attribute_error|
-          error_message = "`#{attribute}' #{attribute_error}"
+          error_message = "`#{attribute_name(attribute)}' #{attribute_error}"
           Errors[422].new(error_message).tap do |error|
-            error.pointer = "/data/attributes/#{attribute}"
+            error.pointer = "/data/attributes/#{attribute_path(attribute)}"
           end
         end
       end
