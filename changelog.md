@@ -5,6 +5,7 @@
 - `SharkOnLambda::BaseController` knows `.rescue_from`, `.rescue_with_handler`, and `#rescue_with_handler` from `ActiveSupport::Rescuable`
 - Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
 - Support `ActiveModel::Errors` nested validation errors.
+- Remove build rake tasks.
 
 #### 0.6.9
 
