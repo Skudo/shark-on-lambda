@@ -95,8 +95,9 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     context 'with an ActiveModel::Errors object (aka "validation errors")' do
       let(:validation_errors) do
         [
-          { attribute: 'attribute_1', message: 'cannot be empty' },
-          { attribute: 'attribute_2', message: 'must be empty' }
+          { attribute: :attribute_1, message: 'cannot be empty' },
+          { attribute: :attribute_2, message: 'must be empty' },
+          { attribute: 'deeply[0].nested[1].attribute', message: 'looks weird' }
         ]
       end
       let(:object) do
@@ -114,7 +115,8 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
 
       it 'renders an array of errors containg validation error messages' do
         expectation = validation_errors.map do |validation_error|
-          "`#{validation_error[:attribute]}' #{validation_error[:message]}"
+          attribute_name = validation_error[:attribute].to_s.split('.').last
+          "`#{attribute_name}' #{validation_error[:message]}"
         end
         errors = subject[:errors]
         expect(errors.map { |error| error[:detail] }).to eq(expectation)
@@ -122,7 +124,9 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
 
       it 'renders an array of errors containg pointers to the attributes' do
         expectation = validation_errors.map do |validation_error|
-          "/data/attributes/#{validation_error[:attribute]}"
+          attribute_path = validation_error[:attribute].to_s.tr('.', '/')
+          attribute_path = attribute_path.gsub(/\[(\d+)\]/, '/\1')
+          "/data/attributes/#{attribute_path}"
         end
         errors = subject[:errors]
         error_pointers = errors.map { |error| error[:source][:pointer] }
