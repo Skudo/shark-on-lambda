@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pry' if Gem.loaded_specs.key?('pry')
+
 require 'forwardable'
 require 'ostruct'
 require 'pathname'
