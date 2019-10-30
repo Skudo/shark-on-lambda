@@ -29,7 +29,6 @@ require 'shark_on_lambda/inferrers/serializer_inferrer'
 require 'shark_on_lambda/serializers/base_error_serializer'
 
 require 'shark_on_lambda/base_controller'
-require 'shark_on_lambda/base_handler'
 require 'shark_on_lambda/errors'
 require 'shark_on_lambda/headers'
 require 'shark_on_lambda/jsonapi_controller'
