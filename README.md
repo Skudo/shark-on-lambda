@@ -24,8 +24,7 @@ maintaining a smaller memory footprint.
 
 ## Changelog
 
-### Pre-1.0
-* Supports events from the API Gateway.
+Have a look at the [actual changelog](changelog.md).
 
 ## Installation
 
