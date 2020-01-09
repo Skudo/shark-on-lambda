@@ -8,6 +8,10 @@
 - Merge `SharkOnLambda::BaseHandler` and `SharkOnLambda::BaseController` into `SharkOnLambda::BaseController`.
 - Remove build rake tasks.
 
+#### 0.6.10
+
+- Upgrade `rack` for good measure.
+
 #### 0.6.9
 
 - [Fix] Controllers now execute their parents' `before_actions` and `after_actions`.

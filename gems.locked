@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    shark-on-lambda (0.6.9)
+    shark-on-lambda (0.6.10)
       activesupport
       jsonapi-rb
-      rack
+      rack (>= 2.0.8)
       zeitwerk (~> 2.2)
 
 GEM
