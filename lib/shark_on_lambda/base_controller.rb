@@ -8,6 +8,50 @@ module SharkOnLambda
 
     attr_reader :action_name, :event, :context
 
+    class << self
+      def rescue_with_default_handler(error)
+        Response.new.tap do |response|
+          response.status = error.try(:status) || 500
+          response.body = {
+            message: error.message
+          }.to_json
+        end
+      end
+
+      private
+
+      def known_actions(include_all = false)
+        actions = public_instance_methods(include_all)
+        actions.delete(:call)
+        actions
+      end
+
+      def client_error?(error)
+        error.is_a?(Errors::Base) && (400..499).cover?(error.status)
+      end
+
+      def log_error(error)
+        return if client_error?(error)
+
+        SharkOnLambda.logger.error(error.message)
+        SharkOnLambda.logger.error(error.backtrace.join("\n"))
+        ::Honeybadger.notify(error) if defined?(::Honeybadger)
+      end
+
+      def method_missing(name, *args, &block)
+        instance = new(*args)
+        respond_to_missing?(name) ? instance.call(name) : super
+      rescue StandardError => e
+        log_error(e)
+        error_response = rescue_with_default_handler(e)
+        error_response.to_h
+      end
+
+      def respond_to_missing?(name, include_all = false)
+        known_actions(include_all).include?(name)
+      end
+    end
+
     def initialize(event:, context:)
       @event = event
       @context = context
@@ -19,7 +63,9 @@ module SharkOnLambda
       begin
         call_with_filter_actions(method)
       rescue StandardError => e
-        rescue_with_handler(e) || raise(e)
+        unless rescue_with_handler(e)
+          @response = self.class.rescue_with_default_handler(e)
+        end
       end
 
       response.to_h
@@ -54,7 +100,7 @@ module SharkOnLambda
       @response ||= Response.new
     end
 
-    protected
+    private
 
     def respond!
       if responded?

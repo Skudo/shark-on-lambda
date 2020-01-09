@@ -1,54 +1,82 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::BaseController do
-  let(:event) { attributes_for(:api_gateway_event) }
-  let(:context) { build(:api_gateway_context) }
+  let(:event) { {} }
+  let(:context) { {} }
+  let(:controller_class) do
+    Class.new(SharkOnLambda::BaseController) do
+      before_action :before_action_method
+      after_action :after_action_method
 
-  subject do
-    SharkOnLambda::BaseController.new(event: event, context: context)
+      rescue_from HandledException do
+      end
+
+      def after_action_method; end
+
+      def before_action_method; end
+
+      def index; end
+
+      def explode_with_handled_exception
+        raise HandledException, 'I was taken care of.'
+      end
+
+      def explode_with_unhandled_exception
+        raise UnhandledException, 'I was not taken care of.'
+      end
+
+      def after_action_method; end
+
+      def before_action_method; end
+    end
   end
 
-  describe '#call' do
-    let(:controller_class) do
-      Class.new(SharkOnLambda::BaseController) do
-        before_action :before_action_method
-        after_action :after_action_method
+  subject do
+    controller_class.new(event: event, context: context)
+  end
 
-        attr_accessor :called_functions
+  before :all do
+    class HandledException < StandardError; end
+    class UnhandledException < StandardError; end
+  end
 
-        rescue_from HandledException do
-        end
+  after :all do
+    Object.send(:remove_const, :HandledException)
+    Object.send(:remove_const, :UnhandledException)
+  end
 
-        %i[after_action_method before_action_method index].each do |method|
-          define_singleton_method(method) do
-          end
-        end
-
-        def explode_with_handled_exception
-          raise HandledException
-        end
-
-        def explode_with_unhandled_exception
-          raise UnhandledException
-        end
-
-        def after_action_method; end
-
-        def before_action_method; end
+  describe 'calling a class method' do
+    context 'with a matching instance method' do
+      it 'calls the matching instance method' do
+        expect_any_instance_of(controller_class).to(
+          receive(:call).with(:index)
+        )
+        controller_class.index(event: event, context: context)
       end
     end
 
+    context 'without a matching instance method' do
+      subject(:response) do
+        controller_class.not_existing(event: event, context: context)
+      end
+
+      it 'returns a HTTP 500 response' do
+        expect(response[:statusCode]).to eq(500)
+      end
+
+      it 'returns a JSON object' do
+        expect { JSON.parse(response[:body]) }.to_not raise_error
+      end
+
+      it 'returns an error message' do
+        data = JSON.parse(response[:body])
+        expect(data['message']).to start_with("undefined method `not_existing'")
+      end
+    end
+  end
+
+  describe '#call' do
     subject { controller_class.new(event: event, context: context) }
-
-    after do
-      Object.send(:remove_const, :HandledException)
-      Object.send(:remove_const, :UnhandledException)
-    end
-
-    before do
-      class HandledException < StandardError; end
-      class UnhandledException < StandardError; end
-    end
 
     context 'if the controller method exists' do
       it 'calls the controller method with filter actions' do
@@ -56,6 +84,21 @@ RSpec.describe SharkOnLambda::BaseController do
         expect(subject).to receive(:index).once
         expect(subject).to receive(:after_action_method).once
         subject.call(:index)
+      end
+    end
+
+    context 'if the controller method does not exist' do
+      subject(:response) do
+        controller = controller_class.new(event: event, context: context)
+        controller.call(:whatever)
+      end
+
+      it 'returns a 500 response' do
+        expect(response[:statusCode]).to eq(500)
+      end
+
+      it 'returns an error message' do
+        expect(response[:body]).to include("undefined method `whatever'")
       end
     end
 
@@ -70,10 +113,20 @@ RSpec.describe SharkOnLambda::BaseController do
       end
 
       context 'if `rescue_from` does not know about that exception' do
-        it 'raises the exception' do
-          expect { subject.call(:explode_with_unhandled_exception) }.to(
-            raise_error(UnhandledException)
-          )
+        subject(:response) do
+          controller = controller_class.new(event: event, context: context)
+          controller.call(:explode_with_unhandled_exception)
+        end
+
+        it 'returns a 500 response' do
+          expect(response[:statusCode]).to eq(500)
+        end
+
+        it 'returns a response with an error message' do
+          expectation = {
+            message: 'I was not taken care of.'
+          }.to_json
+          expect(response[:body]).to eq(expectation)
         end
       end
     end
