@@ -20,14 +20,14 @@ module SharkOnLambda
 
       private
 
+      def client_error?(error)
+        error.is_a?(Errors::Base) && (400..499).cover?(error.status)
+      end
+
       def known_actions(include_all = false)
         actions = public_instance_methods(include_all)
         actions.delete(:call)
         actions
-      end
-
-      def client_error?(error)
-        error.is_a?(Errors::Base) && (400..499).cover?(error.status)
       end
 
       def log_error(error)
@@ -39,8 +39,10 @@ module SharkOnLambda
       end
 
       def method_missing(name, *args, &block)
+        return super unless respond_to_missing?(name)
+
         instance = new(*args)
-        respond_to_missing?(name) ? instance.call(name) : super
+        instance.call(name)
       rescue StandardError => e
         log_error(e)
         error_response = rescue_with_default_handler(e)
