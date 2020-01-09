@@ -1,6 +1,5 @@
 # shark-on-lambda
-
-[![Travis CI Build Status](https://travis-ci.org/Skudo/shark-on-lambda.svg?branch=develop)](https://travis-ci.org/Skudo/shark-on-lambda)
+[![GitHub Actions Test Status](https://github.com/Skudo/shark-on-lambda/workflows/Tests/badge.svg?branch=develop)]
 [![CodeClimate Maintainability Score](https://api.codeclimate.com/v1/badges/fb0c16b3c6212f97b753/maintainability)](https://codeclimate.com/github/Skudo/shark-on-lambda/maintainability)
 
 `shark-on-lambda` provides a lightweight framework to write Ruby on AWS Lambda
