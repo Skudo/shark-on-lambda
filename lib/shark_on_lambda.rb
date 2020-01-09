@@ -12,32 +12,14 @@ require 'jsonapi/deserializable'
 require 'jsonapi/serializable'
 require 'rack/utils'
 require 'yaml'
+require 'zeitwerk'
 
-require 'shark_on_lambda/version'
-
-require 'shark_on_lambda/concerns/filter_actions'
-require 'shark_on_lambda/concerns/http_response_validation'
-require 'shark_on_lambda/concerns/resettable_singleton'
-require 'shark_on_lambda/concerns/yaml_config_loader'
-
-require 'shark_on_lambda/configuration'
-require 'shark_on_lambda/secrets'
-
-require 'shark_on_lambda/inferrers/name_inferrer'
-require 'shark_on_lambda/inferrers/serializer_inferrer'
-
-require 'shark_on_lambda/serializers/base_error_serializer'
-
-require 'shark_on_lambda/base_controller'
-require 'shark_on_lambda/errors'
-require 'shark_on_lambda/headers'
-require 'shark_on_lambda/jsonapi_controller'
-require 'shark_on_lambda/jsonapi_parameters'
-require 'shark_on_lambda/jsonapi_renderer'
-require 'shark_on_lambda/parameters'
-require 'shark_on_lambda/query'
-require 'shark_on_lambda/request'
-require 'shark_on_lambda/response'
+Zeitwerk::Loader.for_gem.tap do |loader|
+  loader.ignore(File.expand_path('shark-on-lambda.rb', __dir__))
+  loader.inflector.inflect('rspec' => 'RSpec')
+  loader.setup
+  loader.eager_load
+end
 
 # Top-level module for this gem.
 module SharkOnLambda
