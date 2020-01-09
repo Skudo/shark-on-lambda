@@ -2,28 +2,26 @@
 
 module SharkOnLambda
   class JsonapiController < BaseController
-    # TODO: Evaluate if deserialisation should happen in here, happen
-    #       somewhere else in SharkOnLambda, or if it should be something
-    #       the user has to take care of entirely.
-    #
-    # class << self
-    #   attr_writer :deserializer_class
-    #
-    #   def deserializer_class
-    #     return @deserializer_class if defined?(@deserializer_class)
-    #
-    #     name_inferrer = Inferrers::NameInferrer.from_controller_name(name)
-    #     @deserializer_class = name_inferrer.deserializer.safe_constantize
-    #   end
-    # end
-    #
-    # def payload
-    #   if request.raw_post.blank?
-    #     raise Errors[400], "The request body can't be empty."
-    #   end
-    #
-    #   deserialize(request.request_parameters[:data])
-    # end
+    class << self
+      def rescue_with_default_handler(error)
+        super.tap do |response|
+          response.headers['content-type'] = 'application/vnd.api+json'
+          response.body = error_body(response.response_code, error.message)
+        end
+      end
+
+      private
+
+      def error_body(status, message)
+        {
+          errors: [{
+            status: status.to_s,
+            title: ::Rack::Utils::HTTP_STATUS_CODES[status],
+            detail: message
+          }]
+        }.to_json
+      end
+    end
 
     def redirect_to(url, options = {})
       status = options[:status] || 307
@@ -45,17 +43,7 @@ module SharkOnLambda
       respond!
     end
 
-    protected
-
-    # def deserialize(data)
-    #   deserializer_class = self.class.deserializer_class
-    #   if deserializer_class.nil?
-    #     raise Errors[500], 'Could not find a deserializer class.'
-    #   end
-    #
-    #   deserializer = deserializer_class.new(data)
-    #   deserializer.to_h
-    # end
+    private
 
     def jsonapi_params
       @jsonapi_params ||= JsonapiParameters.new(params)
@@ -66,10 +54,7 @@ module SharkOnLambda
     end
 
     def serialize(object, options = {})
-      return { data: {} }.to_json if object.nil?
-
-      jsonapi_hash = jsonapi_renderer.render(object, options)
-      jsonapi_hash.to_json
+      jsonapi_renderer.render(object, options)
     end
   end
 end

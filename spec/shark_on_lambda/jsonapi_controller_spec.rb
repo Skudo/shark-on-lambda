@@ -1,8 +1,25 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::JsonapiController do
-  let(:event) { attributes_for(:api_gateway_event) }
-  let(:context) { build(:api_gateway_context) }
+  let(:event) { {} }
+  let(:context) { {} }
+
+  let(:controller_class) do
+    Class.new(SharkOnLambda::JsonapiController) do
+      before_action :before_action_method
+      after_action :after_action_method
+
+      def after_action_method; end
+
+      def before_action_method; end
+
+      def index; end
+
+      def after_action_method; end
+
+      def before_action_method; end
+    end
+  end
 
   subject do
     SharkOnLambda::JsonapiController.new(event: event, context: context)
@@ -17,11 +34,36 @@ RSpec.describe SharkOnLambda::JsonapiController do
     expect(subject.ancestors[0..1]).to eq(expectation)
   end
 
-  # describe '.deserializer_class'
-  #
-  # describe '.deserializer_class='
-  #
-  # describe '#payload'
+  describe 'calling a class method' do
+    context 'without a matching instance method' do
+      subject(:response) do
+        controller_class.not_existing(event: event, context: context)
+      end
+
+      it 'returns a HTTP 500 response' do
+        expect(response[:statusCode]).to eq(500)
+      end
+
+      it 'returns a JSON object' do
+        expect { JSON.parse(response[:body]) }.to_not raise_error
+      end
+
+      it 'returns error messages' do
+        data = JSON.parse(response[:body])
+        expect(data['errors']).to be_present
+      end
+
+      it 'returns an error object' do
+        data = JSON.parse(response[:body])
+        error_object = data['errors']&.first
+        expect(error_object).to be_present
+        expect(error_object['status']).to eq('500')
+        expect(error_object['detail']).to(
+          start_with("undefined method `not_existing'")
+        )
+      end
+    end
+  end
 
   describe '#redirect_to' do
     let(:url) { 'https://example.com' }

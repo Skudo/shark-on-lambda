@@ -14,9 +14,9 @@ module SharkOnLambda
       end
 
       if error?(object)
-        render_errors(object, options)
+        render_errors(object, options).to_json
       else
-        render_success(object, options)
+        render_success(object, options).to_json
       end
     end
 
@@ -62,10 +62,14 @@ module SharkOnLambda
     end
 
     def render_success(object, options)
+      return { data: {} } if object.nil?
+
       renderer.render(object, options)
     end
 
     def renderable?(object, options)
+      return true if object.nil?
+
       serializers = serializer_classes(options)
 
       if object.respond_to?(:to_ary)

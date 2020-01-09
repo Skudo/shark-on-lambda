@@ -71,7 +71,6 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
         [
           'Hello, world!',
           'Nice to meet you!',
-          nil,
           1
         ]
       end
@@ -109,7 +108,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
       end
 
       it 'renders an array of Unprocessable Entity errors' do
-        errors = subject[:errors]
+        errors = JSON.parse(subject).with_indifferent_access[:errors]
         expect(errors.all? { |error| error[:status] == 422 }).to eq(true)
       end
 
@@ -118,7 +117,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
           attribute_name = validation_error[:attribute].to_s.split('.').last
           "`#{attribute_name}' #{validation_error[:message]}"
         end
-        errors = subject[:errors]
+        errors = JSON.parse(subject).with_indifferent_access[:errors]
         expect(errors.map { |error| error[:detail] }).to eq(expectation)
       end
 
@@ -128,7 +127,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
           attribute_path = attribute_path.gsub(/\[(\d+)\]/, '/\1')
           "/data/attributes/#{attribute_path}"
         end
-        errors = subject[:errors]
+        errors = JSON.parse(subject).with_indifferent_access[:errors]
         error_pointers = errors.map { |error| error[:source][:pointer] }
         expect(error_pointers).to eq(expectation)
       end
