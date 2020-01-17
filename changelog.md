@@ -8,6 +8,7 @@
 - Merge `SharkOnLambda::BaseHandler` and `SharkOnLambda::BaseController` into `SharkOnLambda::BaseController`.
 - Remove build rake tasks.
 - Added `SharkOnLambda::RSpec::Helpers` and `SharkOnLambda::RSpec::JsonapiHelpers`.
+- Moved to GitHub.
 
 #### 0.6.10
 
