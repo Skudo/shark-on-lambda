@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.description   = '`shark-on-lambda` does the heavy lifting for writing ' \
                        'web services based on AWS API Gateway on AWS Lambda ' \
                        'using Ruby.'
-  spec.homepage      = 'https://gitlab.com/skudo/shark-on-lambda'
+  spec.homepage      = 'https://github.com/Skudo/shark-on-lambda'
   spec.license       = 'MIT'
 
   # Specify which files should be added to the gem when it is released.
