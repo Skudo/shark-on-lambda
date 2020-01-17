@@ -7,6 +7,7 @@
 - Support `ActiveModel::Errors` nested validation errors.
 - Merge `SharkOnLambda::BaseHandler` and `SharkOnLambda::BaseController` into `SharkOnLambda::BaseController`.
 - Remove build rake tasks.
+- Added `SharkOnLambda::RSpec::Helpers` and `SharkOnLambda::RSpec::JsonapiHelpers`.
 
 #### 0.6.10
 
