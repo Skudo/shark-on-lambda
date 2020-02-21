@@ -30,9 +30,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'actionpack'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'jsonapi-rb'
-  spec.add_dependency 'rack', '>= 2.0.8'
+  spec.add_dependency 'rack', '>= 2.0.8', '< 3'
   spec.add_dependency 'zeitwerk', '~> 2.2'
 
   # TODO: Do we really need `activemodel`?
