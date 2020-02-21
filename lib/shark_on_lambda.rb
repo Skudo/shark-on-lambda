@@ -14,9 +14,15 @@ require 'rack/utils'
 require 'yaml'
 require 'zeitwerk'
 
+# Without this, Zeitwerk hiccups in certain cases...
+module SharkOnLambda; end
+
 Zeitwerk::Loader.for_gem.tap do |loader|
   loader.ignore(File.expand_path('shark-on-lambda.rb', __dir__))
-  loader.inflector.inflect('rspec' => 'RSpec')
+  loader.inflector.inflect(
+    'rspec' => 'RSpec',
+    'version' => 'VERSION'
+  )
   loader.setup
   loader.eager_load
 end
