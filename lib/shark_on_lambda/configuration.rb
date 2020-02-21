@@ -56,6 +56,10 @@ module SharkOnLambda
       end
     end
 
+    def middleware
+      @middleware ||= ::ActionDispatch::MiddlewareStack.new
+    end
+
     def root
       @root ||= Pathname.new('.')
     end

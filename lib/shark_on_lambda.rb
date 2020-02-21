@@ -7,6 +7,9 @@ require 'ostruct'
 require 'pathname'
 require 'singleton'
 
+require 'action_controller'
+require 'action_dispatch'
+require 'action_view'
 require 'active_support/all'
 require 'jsonapi/deserializable'
 require 'jsonapi/serializable'
@@ -35,6 +38,10 @@ module SharkOnLambda
     attr_writer :logger
 
     def_instance_delegators :config, :root, :stage
+
+    def application
+      @application ||= Application.new
+    end
 
     def config
       Configuration.instance

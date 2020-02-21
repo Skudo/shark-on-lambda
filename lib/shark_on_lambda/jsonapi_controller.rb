@@ -2,59 +2,32 @@
 
 module SharkOnLambda
   class JsonapiController < BaseController
-    class << self
-      def rescue_with_default_handler(error)
-        super.tap do |response|
-          response.headers['content-type'] = 'application/vnd.api+json'
-          response.body = error_body(response.response_code, error.message)
-        end
-      end
+    ::ActionController::Renderers.add :jsonapi do |object, options|
+      response.set_header('content-type', 'application/vnd.api+json')
 
-      private
+      if object.nil?
+        { data: {} }.to_json
+      else
+        jsonapi_params = JsonapiParameters.new(params)
+        jsonapi_renderer = JsonapiRenderer.new
+        render_options = jsonapi_params.to_h.deep_merge(options)
 
-      def error_body(status, message)
-        {
-          errors: [{
-            status: status.to_s,
-            title: ::Rack::Utils::HTTP_STATUS_CODES[status],
-            detail: message
-          }]
-        }.to_json
+        jsonapi_renderer.render(object, render_options)
       end
     end
 
-    def redirect_to(url, options = {})
-      status = options[:status] || 307
-      validate_url!(url)
-      validate_redirection_status!(status)
+    def redirect_to(options = {}, response_status = {})
+      super
+      return if response_status[:status] == 304
 
-      uri = URI.parse(url)
-      response.set_header('Location', uri.to_s)
-      render(nil, status: status)
+      self.response_body = { data: {} }.to_json
     end
 
     def render(object, options = {})
-      status = options.delete(:status) || 200
-      renderer_options = jsonapi_params.to_h.merge(options)
-
-      body = serialize(object, renderer_options)
-      update_response(status: status, body: body)
-
-      respond!
-    end
-
-    private
-
-    def jsonapi_params
-      @jsonapi_params ||= JsonapiParameters.new(params)
-    end
-
-    def jsonapi_renderer
-      @jsonapi_renderer ||= JsonapiRenderer.new
-    end
-
-    def serialize(object, options = {})
-      jsonapi_renderer.render(object, options)
+      super options.merge(
+        jsonapi: object,
+        content_type: 'application/vnd.api+json'
+      )
     end
   end
 end
