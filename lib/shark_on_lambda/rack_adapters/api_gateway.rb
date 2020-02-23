@@ -53,7 +53,7 @@ module SharkOnLambda
         result = Base64.decode64(result) if event['isBase64Encoded']
 
         {
-          'rack.input' => StringIO.new(result)
+          'rack.input' => StringIO.new(result).set_encoding(Encoding::BINARY)
         }
       end
 
