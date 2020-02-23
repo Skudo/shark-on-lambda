@@ -88,9 +88,9 @@ RSpec.describe SharkOnLambda::JsonapiController do
       expect(response.body).to eq(expectation)
     end
 
-    it 'responds with a 307 status code by default' do
+    it 'responds with a 302 status code by default' do
       subject
-      expect(response.response_code).to eq(307)
+      expect(response.response_code).to eq(302)
     end
 
     context 'if #redirect_to has been called before' do
@@ -122,8 +122,8 @@ RSpec.describe SharkOnLambda::JsonapiController do
 
       before { subject }
 
-      it 'returns a 307 response with a body' do
-        expect(response.response_code).to eq(307)
+      it 'returns a 302 response with a body' do
+        expect(response.response_code).to eq(302)
         expect(response.body).to be_present
       end
 

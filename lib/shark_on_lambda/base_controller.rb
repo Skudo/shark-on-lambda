@@ -36,8 +36,8 @@ module SharkOnLambda
       raise Errors[500], e.message
     end
 
-    def redirect_to(options = {}, response_status = {})
-      super(options, response_status.reverse_merge(status: 307))
+    def redirect_to(*)
+      super
       self.response_body = '' if no_body?
     end
 

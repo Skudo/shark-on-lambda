@@ -148,9 +148,9 @@ RSpec.describe SharkOnLambda::BaseController do
     context 'with no status code, but a parsable URL' do
       let(:action) { 'redirect_once' }
 
-      it 'returns a 307 response with a body' do
+      it 'returns a 302 response with a body' do
         subject
-        expect(response.response_code).to eq(307)
+        expect(response.response_code).to eq(302)
         expect(response.body).to be_present
       end
 
