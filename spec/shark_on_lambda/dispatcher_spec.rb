@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::Middleware::Dispatcher do
+RSpec.describe SharkOnLambda::Dispatcher do
   let(:default_env) do
     {
       'rack.input' => StringIO.new(''),
@@ -23,7 +23,7 @@ RSpec.describe SharkOnLambda::Middleware::Dispatcher do
   end
 
   subject do
-    SharkOnLambda::Middleware::Dispatcher.new
+    SharkOnLambda::Dispatcher.new
   end
 
   describe '#call' do
