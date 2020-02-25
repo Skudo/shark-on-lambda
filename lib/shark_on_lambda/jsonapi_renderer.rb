@@ -3,7 +3,7 @@
 module SharkOnLambda
   class JsonapiRenderer
     def initialize(renderer: nil)
-      @renderer = renderer || ::JSONAPI::Serializable::Renderer.new
+      @renderer = renderer || JSONAPI::Serializable::Renderer.new
     end
 
     def render(object, options = {})

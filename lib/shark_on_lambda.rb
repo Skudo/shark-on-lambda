@@ -7,6 +7,9 @@ require 'ostruct'
 require 'pathname'
 require 'singleton'
 
+require 'action_controller'
+require 'action_dispatch'
+require 'action_view'
 require 'active_support/all'
 require 'jsonapi/deserializable'
 require 'jsonapi/serializable'
@@ -14,9 +17,15 @@ require 'rack/utils'
 require 'yaml'
 require 'zeitwerk'
 
+# Without this, Zeitwerk hiccups in certain cases...
+module SharkOnLambda; end
+
 Zeitwerk::Loader.for_gem.tap do |loader|
   loader.ignore(File.expand_path('shark-on-lambda.rb', __dir__))
-  loader.inflector.inflect('rspec' => 'RSpec')
+  loader.inflector.inflect(
+    'rspec' => 'RSpec',
+    'version' => 'VERSION'
+  )
   loader.setup
   loader.eager_load
 end
@@ -24,11 +33,15 @@ end
 # Top-level module for this gem.
 module SharkOnLambda
   class << self
-    extend ::Forwardable
+    extend Forwardable
 
     attr_writer :logger
 
     def_instance_delegators :config, :root, :stage
+
+    def application
+      @application ||= Application.new
+    end
 
     def config
       Configuration.instance
@@ -56,7 +69,7 @@ module SharkOnLambda
     end
 
     def logger
-      @logger ||= ::Logger.new(STDOUT)
+      @logger ||= Logger.new(STDOUT)
     end
 
     def reset_configuration

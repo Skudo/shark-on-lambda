@@ -2,7 +2,7 @@
 
 module SharkOnLambda
   module Errors
-    class BaseSerializer < ::JSONAPI::Serializable::Error
+    class BaseSerializer < JSONAPI::Serializable::Error
       id { @object.id }
       status { @object.status }
       code { @object.code }

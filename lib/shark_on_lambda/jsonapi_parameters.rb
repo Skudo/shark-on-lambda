@@ -53,7 +53,7 @@ module SharkOnLambda
     end
 
     def parse_include_params(include_params)
-      include_params = ::JSONAPI::IncludeDirective.new(include_params)
+      include_params = JSONAPI::IncludeDirective.new(include_params)
       include_params = include_params.to_hash
       includes(include_params.with_indifferent_access)
     end
