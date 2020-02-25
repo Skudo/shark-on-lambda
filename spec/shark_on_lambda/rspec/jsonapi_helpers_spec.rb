@@ -66,7 +66,7 @@ RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
     )
   end
 
-  let(:instance) { class_with_mixin.new }
+  let!(:instance) { class_with_mixin.new }
 
   before do
     instance.get action, headers: request_headers, params: request_params

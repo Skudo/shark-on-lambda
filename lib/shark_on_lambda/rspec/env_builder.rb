@@ -51,7 +51,7 @@ module SharkOnLambda
       end
 
       def initialize_env
-        @env = ::Rack::MockRequest.env_for(
+        @env = Rack::MockRequest.env_for(
           'https://localhost:9292',
           method: method,
           params: params,

@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::RackAdapters::ApiGateway do
-  let(:context) { attributes_for(:api_gateway_context) }
-  let(:event) { attributes_for(:api_gateway_event).deep_stringify_keys }
+  let!(:context) { attributes_for(:api_gateway_context) }
+  let!(:event) { attributes_for(:api_gateway_event).deep_stringify_keys }
 
-  let(:instance) do
+  let!(:instance) do
     SharkOnLambda::RackAdapters::ApiGateway.new(context: context, event: event)
   end
 
   describe '#build_response' do
-    let(:status) { 200 }
-    let(:headers) { {} }
-    let(:body) { 'Hello, world!' }
-    let(:body_proxy) do
-      ::Rack::BodyProxy.new([body]) do
+    let!(:status) { 200 }
+    let!(:headers) { {} }
+    let!(:body) { 'Hello, world!' }
+    let!(:body_proxy) do
+      Rack::BodyProxy.new([body]) do
       end
     end
 
     subject { instance.build_response(status, headers, body_proxy) }
 
     context 'with a request from an ELB' do
-      let(:event) do
+      let!(:event) do
         attributes = attributes_for(:api_gateway_event)
         attributes[:requestContext].merge!(elb: true)
         attributes.deep_stringify_keys
@@ -48,8 +48,8 @@ RSpec.describe SharkOnLambda::RackAdapters::ApiGateway do
     subject(:env) { instance.env }
 
     context 'with a base64 encoded body' do
-      let(:plain_text_body) { 'Hello, world!' }
-      let(:event) do
+      let!(:plain_text_body) { 'Hello, world!' }
+      let!(:event) do
         attributes = attributes_for(:api_gateway_event,
                                     body: Base64.encode64(plain_text_body),
                                     isBase64Encoded: true)

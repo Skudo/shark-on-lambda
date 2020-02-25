@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Dispatcher do
-  let(:default_env) do
+  let!(:default_env) do
     {
       'rack.input' => StringIO.new(''),
       'REQUEST_METHOD' => 'GET',
@@ -28,7 +28,7 @@ RSpec.describe SharkOnLambda::Dispatcher do
 
   describe '#call' do
     context 'with a non-existent controller' do
-      let(:env) do
+      let!(:env) do
         default_env.merge('shark.controller' => 'non_existent')
       end
 
@@ -41,7 +41,7 @@ RSpec.describe SharkOnLambda::Dispatcher do
 
     context 'with an existing controller' do
       context 'with a non-existent action' do
-        let(:env) do
+        let!(:env) do
           default_env.merge('shark.action' => 'non_existent')
         end
 
@@ -53,7 +53,7 @@ RSpec.describe SharkOnLambda::Dispatcher do
       end
 
       context 'with an existing action' do
-        let(:env) { default_env }
+        let!(:env) { default_env }
 
         it 'returns a rack-compatible response' do
           status, headers, body = subject.call(env)

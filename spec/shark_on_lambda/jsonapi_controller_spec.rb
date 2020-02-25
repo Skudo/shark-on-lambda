@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::JsonapiController do
-  let(:action) { 'index' }
-  let(:rack_env) do
+  let!(:action) { 'index' }
+  let!(:rack_env) do
     {
       'rack.input' => StringIO.new(''),
       'REQUEST_METHOD' => 'GET'
     }
   end
-  let(:request) { SharkOnLambda::Request.new(rack_env) }
-  let(:response) { SharkOnLambda::Response.new }
+  let!(:request) { SharkOnLambda::Request.new(rack_env) }
+  let!(:response) { SharkOnLambda::Response.new }
 
-  let(:controller_class) do
+  let!(:controller_class) do
     Class.new(SharkOnLambda::JsonapiController) do
       before_action :before_action_method
       after_action :after_action_method
@@ -78,8 +78,8 @@ RSpec.describe SharkOnLambda::JsonapiController do
   end
 
   describe '#redirect_to' do
-    let(:action) { 'redirect_once' }
-    let(:url) { 'https://example.com' }
+    let!(:action) { 'redirect_once' }
+    let!(:url) { 'https://example.com' }
 
     it 'sets an "empty" (as empty as JSON API permits "empty") response body' do
       expectation = { data: {} }.to_json
@@ -94,7 +94,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'if #redirect_to has been called before' do
-      let(:action) { 'redirect_twice' }
+      let!(:action) { 'redirect_twice' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -102,7 +102,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'if #render has been called before' do
-      let(:action) { 'render_then_redirect' }
+      let!(:action) { 'render_then_redirect' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -110,7 +110,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'with an unparsable redirection URL' do
-      let(:action) { 'invalid_redirect' }
+      let!(:action) { 'invalid_redirect' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -118,7 +118,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'with no status code, but a parsable URL' do
-      let(:action) { 'redirect_once' }
+      let!(:action) { 'redirect_once' }
 
       before { subject }
 
@@ -133,7 +133,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'with a 304 status code' do
-      let(:action) { 'redirect_with_304' }
+      let!(:action) { 'redirect_with_304' }
 
       before { subject }
 
@@ -154,7 +154,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
   # TODO: Add actual testing for render behaviour.
   describe '#render' do
     context 'if #redirect_to has been called before' do
-      let(:action) { 'redirect_then_render' }
+      let!(:action) { 'redirect_then_render' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -162,7 +162,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'if #render has been called before' do
-      let(:action) { 'render_twice' }
+      let!(:action) { 'render_twice' }
 
       it 'sets the response body to the second render result' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -170,7 +170,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
     end
 
     context 'with nil' do
-      let(:action) { 'render_nil' }
+      let!(:action) { 'render_nil' }
 
       before { subject }
 

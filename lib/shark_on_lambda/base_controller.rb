@@ -24,15 +24,15 @@ module SharkOnLambda
       ActionController::HttpAuthentication::Token::ControllerMethods,
       ActionView::Layouts
     ].freeze
-    ::ActionController::Base.without_modules(EXCLUDED_MODULES).each do |mod|
+    ActionController::Base.without_modules(EXCLUDED_MODULES).each do |mod|
       include mod
     end
 
     def self.dispatch(*)
       super
-    rescue ::AbstractController::ActionNotFound,
-           ::AbstractController::DoubleRenderError,
-           ::ActionController::ActionControllerError => e
+    rescue AbstractController::ActionNotFound,
+           AbstractController::DoubleRenderError,
+           ActionController::ActionControllerError => e
       raise Errors[500], e.message
     end
 

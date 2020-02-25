@@ -34,7 +34,7 @@ module SharkOnLambda
       def default_env
         {
           'SCRIPT_NAME' => '',
-          'rack.version' => ::Rack::VERSION,
+          'rack.version' => Rack::VERSION,
           'rack.errors' => $stderr,
           'rack.multithread' => true,
           'rack.multiprocess' => true,

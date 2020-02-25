@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'zeitwerk', '~> 2.2'
 
   # TODO: Do we really need `activemodel`?
-  #       Or can we get away with mocking out ::ActiveModel::Errors?
+  #       Or can we get away with mocking out ActiveModel::Errors?
   spec.add_development_dependency 'activemodel'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'factory_bot'

@@ -33,7 +33,7 @@ end
 # Top-level module for this gem.
 module SharkOnLambda
   class << self
-    extend ::Forwardable
+    extend Forwardable
 
     attr_writer :logger
 
@@ -69,7 +69,7 @@ module SharkOnLambda
     end
 
     def logger
-      @logger ||= ::Logger.new(STDOUT)
+      @logger ||= Logger.new(STDOUT)
     end
 
     def reset_configuration

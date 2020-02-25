@@ -139,7 +139,7 @@ _JSON API_ compatibility. Therefore, we expect the serialisers to be inherited
 from `::JSONAPI::Serializable::Resource` (or `::JSONAPI::Serializable::Error`).
 
 ```ruby
-class SomethingSerializer < ::JSONAPI::Serializable::Resource
+class SomethingSerializer < JSONAPI::Serializable::Resource
   type :somethings
   
   attributes :foo, :bar, :baz

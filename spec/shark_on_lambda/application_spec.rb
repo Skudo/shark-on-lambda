@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Application do
-  let(:body) do
-    ::Rack::BodyProxy.new('Hello, world!') do
+  let!(:body) do
+    Rack::BodyProxy.new('Hello, world!') do
     end
   end
-  let(:dispatcher_response) { [200, {}, body] }
-  let(:env) { {} }
+  let!(:dispatcher_response) { [200, {}, body] }
+  let!(:env) { {} }
 
   subject do
     SharkOnLambda::Application.new
@@ -43,6 +43,16 @@ RSpec.describe SharkOnLambda::Application do
 
     context 'using middleware' do
       before do
+        # Doing the obvious
+        #
+        #     SharkOnLambda.config.middleware.use(
+        #       SharkOnLambda::Middleware::Rescuer
+        #     )
+        #
+        # does not work, because it throws an error:
+        #
+        #     FrozenError: can't modify frozen Array
+        #
         stack = ActionDispatch::MiddlewareStack.new
         stack.use(SharkOnLambda::Middleware::Rescuer)
         allow(SharkOnLambda.config).to receive(:middleware).and_return(stack)

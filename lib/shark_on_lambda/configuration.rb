@@ -61,7 +61,7 @@ module SharkOnLambda
     end
 
     def middleware
-      @middleware ||= ::ActionDispatch::MiddlewareStack.new
+      @middleware ||= ActionDispatch::MiddlewareStack.new
     end
 
     def root

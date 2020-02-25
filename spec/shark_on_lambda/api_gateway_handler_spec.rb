@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::ApiGatewayHandler do
-  let(:context) { attributes_for(:api_gateway_context) }
-  let(:event) { attributes_for(:api_gateway_event).deep_stringify_keys }
+  let!(:context) { attributes_for(:api_gateway_context) }
+  let!(:event) { attributes_for(:api_gateway_event).deep_stringify_keys }
 
   before :all do
     class ApiGatewayController < SharkOnLambda::BaseController
@@ -47,7 +47,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
     subject { ApiGatewayHandler.controller_action?(action) }
 
     context 'with a matching controller action' do
-      let(:action) { 'index' }
+      let!(:action) { 'index' }
 
       it 'returns true' do
         expect(subject).to eq(true)
@@ -55,7 +55,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
     end
 
     context 'without a matching controller' do
-      let(:action) { 'does_not_exist' }
+      let!(:action) { 'does_not_exist' }
 
       it 'returns false' do
         expect(subject).to eq(false)
@@ -78,7 +78,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
     end
 
     context 'with an action that matches a controller action' do
-      let(:action) { 'index' }
+      let!(:action) { 'index' }
 
       it 'ultimately calls the right controller action' do
         expect_any_instance_of(ApiGatewayController).to receive(:index)
@@ -93,7 +93,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
     end
 
     context 'with an action that does not match a controller action' do
-      let(:action) { 'does_not_exist' }
+      let!(:action) { 'does_not_exist' }
 
       it 'raises a NoMethodError exception' do
         expect { subject }.to raise_error(NoMethodError)

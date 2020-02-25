@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Concerns::YamlConfigLoader do
-  let(:class_with_mixin) do
+  let!(:class_with_mixin) do
     Class.new do
       include SharkOnLambda::Concerns::YamlConfigLoader
     end
@@ -10,10 +10,10 @@ RSpec.describe SharkOnLambda::Concerns::YamlConfigLoader do
   subject { class_with_mixin.new }
 
   describe '#load_yaml_files' do
-    let(:stage) { :stage }
-    let(:fallback) { :default }
-    let(:config_files) { %w[config.yml config.local.yml] }
-    let(:config_paths) do
+    let!(:stage) { :stage }
+    let!(:fallback) { :default }
+    let!(:config_files) { %w[config.yml config.local.yml] }
+    let!(:config_paths) do
       config_dir = File.expand_path('../../fixtures', __dir__)
       config_files.map { |config_file| File.join(config_dir, config_file) }
     end
@@ -49,8 +49,8 @@ RSpec.describe SharkOnLambda::Concerns::YamlConfigLoader do
     end
 
     context 'with configuration for the requested stage' do
-      let(:config_files) { %w[config.yml] }
-      let(:stage) { :staging }
+      let!(:config_files) { %w[config.yml] }
+      let!(:stage) { :staging }
 
       it 'loads the configuration for the requested stage' do
         expectation = {
@@ -62,7 +62,7 @@ RSpec.describe SharkOnLambda::Concerns::YamlConfigLoader do
     end
 
     context 'without configuration for the requested stage' do
-      let(:config_files) { %w[config.yml] }
+      let!(:config_files) { %w[config.yml] }
 
       it 'loads the configuration for the fallback stage' do
         expectation = {
@@ -74,7 +74,7 @@ RSpec.describe SharkOnLambda::Concerns::YamlConfigLoader do
     end
 
     context 'with multiple configuration files' do
-      let(:stage) { :development }
+      let!(:stage) { :development }
 
       it 'merges the configuration the same order they were loaded' do
         expectation = {

@@ -4,8 +4,8 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
   class CustomObject; end
   class CustomObjectSerializer; end
 
-  let(:renderer) { ::JSONAPI::Serializable::Renderer.new }
-  let(:params) { SharkOnLambda::JsonapiParameters.new.to_h }
+  let!(:renderer) { JSONAPI::Serializable::Renderer.new }
+  let!(:params) { SharkOnLambda::JsonapiParameters.new.to_h }
 
   describe '#render' do
     subject do
@@ -16,7 +16,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with a serializable non-error object' do
-      let(:object) { CustomObject.new }
+      let!(:object) { CustomObject.new }
 
       it 'renders the object using the renderer' do
         expect(renderer).to receive(:render).with(object, params.to_h)
@@ -25,7 +25,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with an array of serializable non-error objects' do
-      let(:object) { [CustomObject.new, CustomObject.new] }
+      let!(:object) { [CustomObject.new, CustomObject.new] }
 
       it 'renders the arry of objects using the renderer' do
         expect(renderer).to receive(:render).with(object, params.to_h)
@@ -34,7 +34,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with a serializable error object' do
-      let(:object) { SharkOnLambda::Errors::Base.new }
+      let!(:object) { SharkOnLambda::Errors::Base.new }
 
       it 'renders the error object using the renderer' do
         expect(renderer).to receive(:render_errors).with([object], params.to_h)
@@ -43,7 +43,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with an array of serializable error objects' do
-      let(:object) do
+      let!(:object) do
         [
           SharkOnLambda::Errors::Base.new,
           SharkOnLambda::Errors::Base.new
@@ -57,7 +57,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with an unserializable object' do
-      let(:object) { 'Hello, world!' }
+      let!(:object) { 'Hello, world!' }
 
       it 'renders an Internal Server Error object' do
         errors = subject[:errors]
@@ -67,7 +67,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with an array of unserializable objects' do
-      let(:object) do
+      let!(:object) do
         [
           'Hello, world!',
           'Nice to meet you!',
@@ -92,15 +92,15 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with an ActiveModel::Errors object (aka "validation errors")' do
-      let(:validation_errors) do
+      let!(:validation_errors) do
         [
           { attribute: :attribute_1, message: 'cannot be empty' },
           { attribute: :attribute_2, message: 'must be empty' },
           { attribute: 'deeply[0].nested[1].attribute', message: 'looks weird' }
         ]
       end
-      let(:object) do
-        errors = ::ActiveModel::Errors.new(CustomObject.new)
+      let!(:object) do
+        errors = ActiveModel::Errors.new(CustomObject.new)
         validation_errors.each do |validation_error|
           errors.add(validation_error[:attribute], validation_error[:message])
         end

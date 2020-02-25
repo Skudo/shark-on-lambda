@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Errors::BaseSerializer do
-  let(:error_message) { 'To err or not to err, that is the question.' }
-  let(:error_attributes) do
+  let!(:error_message) { 'To err or not to err, that is the question.' }
+  let!(:error_attributes) do
     {
       id: '12345678-9012-3456-78901234',
       code: '42',
@@ -12,13 +12,13 @@ RSpec.describe SharkOnLambda::Errors::BaseSerializer do
       }
     }
   end
-  let(:error_source) do
+  let!(:error_source) do
     {
       pointer: '/some/pointer',
       parameter: 'foo'
     }
   end
-  let(:error) do
+  let!(:error) do
     error_class = Class.new(SharkOnLambda::Errors::Base) do
       status 415
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Middleware::Base do
-  let(:env) { {} }
+  let!(:env) { {} }
 
   subject do
     SharkOnLambda::Middleware::Base.new

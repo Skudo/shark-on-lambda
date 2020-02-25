@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::BaseController do
-  let(:action) { 'index' }
-  let(:rack_env) do
+  let!(:action) { 'index' }
+  let!(:rack_env) do
     {
       'rack.input' => StringIO.new(''),
       'REQUEST_METHOD' => 'GET'
     }
   end
-  let(:request) { SharkOnLambda::Request.new(rack_env) }
-  let(:response) { SharkOnLambda::Response.new }
+  let!(:request) { SharkOnLambda::Request.new(rack_env) }
+  let!(:response) { SharkOnLambda::Response.new }
 
-  let(:controller_class) do
+  let!(:controller_class) do
     Class.new(SharkOnLambda::BaseController) do
       before_action :before_action_method
       after_action :after_action_method
@@ -86,7 +86,7 @@ RSpec.describe SharkOnLambda::BaseController do
 
   describe '.dispatch' do
     context 'without a matching instance method' do
-      let(:action) { 'does-not-exist' }
+      let!(:action) { 'does-not-exist' }
 
       it 'raises an error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -95,7 +95,7 @@ RSpec.describe SharkOnLambda::BaseController do
 
     context 'when an exception is thrown' do
       context 'if `rescue_from` knows about that exception' do
-        let(:action) { 'explode_with_handled_exception' }
+        let!(:action) { 'explode_with_handled_exception' }
 
         it 'does not throw an exception' do
           expect { subject }.to_not raise_error
@@ -109,7 +109,7 @@ RSpec.describe SharkOnLambda::BaseController do
       end
 
       context 'if `rescue_from` does not know about that exception' do
-        let(:action) { 'explode_with_unhandled_exception' }
+        let!(:action) { 'explode_with_unhandled_exception' }
 
         it 'throws an exception' do
           expect { subject }.to(
@@ -122,7 +122,7 @@ RSpec.describe SharkOnLambda::BaseController do
 
   describe '#redirect_to' do
     context 'if #redirect_to has been called before' do
-      let(:action) { 'redirect_twice' }
+      let!(:action) { 'redirect_twice' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -130,7 +130,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'if #render has been called before' do
-      let(:action) { 'render_then_redirect' }
+      let!(:action) { 'render_then_redirect' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -138,7 +138,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'with an unparsable redirection URL' do
-      let(:action) { 'invalid_redirect' }
+      let!(:action) { 'invalid_redirect' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -146,7 +146,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'with no status code, but a parsable URL' do
-      let(:action) { 'redirect_once' }
+      let!(:action) { 'redirect_once' }
 
       it 'returns a 302 response with a body' do
         subject
@@ -161,7 +161,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'with a 304 status code' do
-      let(:action) { 'redirect_with_304' }
+      let!(:action) { 'redirect_with_304' }
 
       it 'sets the response status code' do
         subject
@@ -183,7 +183,7 @@ RSpec.describe SharkOnLambda::BaseController do
   # TODO: Add actual testing for render behaviour.
   describe '#render' do
     context 'if #redirect_to has been called before' do
-      let(:action) { 'redirect_then_render' }
+      let!(:action) { 'redirect_then_render' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -191,7 +191,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'if #render has been called before' do
-      let(:action) { 'render_twice' }
+      let!(:action) { 'render_twice' }
 
       it 'sets the response body to the second render result' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])

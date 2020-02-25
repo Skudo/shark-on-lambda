@@ -77,7 +77,7 @@ module SharkOnLambda
           skip_middleware: options[:skip_middleware]
         )
         errors = env['rack.errors']
-        @response = ::Rack::MockResponse.new(status, headers, body, errors)
+        @response = Rack::MockResponse.new(status, headers, body, errors)
       end
     end
   end

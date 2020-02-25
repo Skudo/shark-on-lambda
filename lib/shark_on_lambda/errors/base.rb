@@ -2,7 +2,7 @@
 
 module SharkOnLambda
   module Errors
-    class Base < ::StandardError
+    class Base < StandardError
       attr_accessor :id, :code, :meta, :pointer, :parameter
       attr_writer :detail
 
@@ -20,7 +20,7 @@ module SharkOnLambda
       end
 
       def title
-        ::Rack::Utils::HTTP_STATUS_CODES[status]
+        Rack::Utils::HTTP_STATUS_CODES[status]
       end
     end
 
@@ -28,7 +28,7 @@ module SharkOnLambda
       @errors[status_code]
     end
 
-    @errors = ::Rack::Utils::HTTP_STATUS_CODES.map do |status_code, message|
+    @errors = Rack::Utils::HTTP_STATUS_CODES.map do |status_code, message|
       next unless (400..599).cover?(status_code) && message.present?
 
       error_class = Class.new(Base) do

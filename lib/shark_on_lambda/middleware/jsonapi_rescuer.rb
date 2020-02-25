@@ -8,7 +8,7 @@ module SharkOnLambda
       def error_object(status, message)
         {
           status: status.to_s,
-          title: ::Rack::Utils::HTTP_STATUS_CODES[status],
+          title: Rack::Utils::HTTP_STATUS_CODES[status],
           detail: message
         }
       end
@@ -20,7 +20,7 @@ module SharkOnLambda
           ]
         }.to_json
 
-        response_body = ::Rack::BodyProxy.new([body]) do
+        response_body = Rack::BodyProxy.new([body]) do
           message.close if message.respond_to?(:close)
         end
 

@@ -14,7 +14,7 @@ module SharkOnLambda
       end
 
       def error_response(status, headers, message)
-        response_body = ::Rack::BodyProxy.new([message]) do
+        response_body = Rack::BodyProxy.new([message]) do
           message.close if message.respond_to?(:close)
         end
 
@@ -27,6 +27,10 @@ module SharkOnLambda
       end
 
       def rescue_standard_error(error)
+        SharkOnLambda.logger.error(error.message)
+        SharkOnLambda.logger.error(error.backtrace.join("\n"))
+        Honeybadger.notify(error) if defined?(Honeybadger)
+
         error_response(500, {}, error.message)
       end
     end

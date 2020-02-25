@@ -62,7 +62,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
     )
   end
 
-  let(:instance) { class_with_mixin.new }
+  let!(:instance) { class_with_mixin.new }
 
   %w[delete get patch post put].each do |http_verb|
     describe "##{http_verb.upcase}" do
