@@ -9,7 +9,7 @@ module SharkOnLambda
     private
 
     def _call(env)
-      dispatcher = Dispatcher.new
+      dispatcher = SharkOnLambda.config.dispatcher
       middleware_stack = SharkOnLambda.config.middleware.build(dispatcher)
       middleware_stack.call(env)
     end

@@ -4,7 +4,7 @@ module SharkOnLambda
   class Configuration < OpenStruct
     include Concerns::ResettableSingleton
 
-    attr_writer :stage
+    attr_writer :dispatcher, :stage
 
     class << self
       include Concerns::YamlConfigLoader
@@ -54,6 +54,10 @@ module SharkOnLambda
       def paths(files)
         files.map { |file| SharkOnLambda.config.root.join(file) }
       end
+    end
+
+    def dispatcher
+      @dispatcher ||= Dispatcher.new
     end
 
     def middleware

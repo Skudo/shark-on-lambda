@@ -13,17 +13,15 @@ RSpec.describe SharkOnLambda::Application do
   end
 
   before do
-    allow_any_instance_of(SharkOnLambda::Dispatcher).to(
+    allow(SharkOnLambda.config.dispatcher).to(
       receive(:call).and_return(dispatcher_response)
     )
   end
 
   describe '#call' do
     context 'without using any middleware' do
-      it 'eventually calls `SharkOnLambda::Dispatcher#call`' do
-        expect_any_instance_of(SharkOnLambda::Dispatcher).to(
-          receive(:call)
-        )
+      it 'eventually calls the dispatcher' do
+        expect(SharkOnLambda.config.dispatcher).to(receive(:call))
 
         subject.call(env)
       end
@@ -50,10 +48,8 @@ RSpec.describe SharkOnLambda::Application do
         allow(SharkOnLambda.config).to receive(:middleware).and_return(stack)
       end
 
-      it 'eventually calls `SharkOnLambda::Dispatcher#call`' do
-        expect_any_instance_of(SharkOnLambda::Dispatcher).to(
-          receive(:call)
-        )
+      it 'eventually calls the dispatcher' do
+        expect(SharkOnLambda.config.dispatcher).to(receive(:call))
 
         subject.call(env)
       end
