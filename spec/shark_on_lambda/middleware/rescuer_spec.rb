@@ -52,6 +52,16 @@ RSpec.describe SharkOnLambda::Middleware::Rescuer do
     let!(:exception) { StandardError.new(message) }
     let!(:app) { ->(_env) { raise exception } }
 
+    before do
+      allow(SharkOnLambda.logger).to receive(:error)
+    end
+
+    it 'logs the thrown exception and its backtrace' do
+      expect(SharkOnLambda.logger).to receive(:error).twice
+
+      subject
+    end
+
     it 'returns the right response status' do
       status, = subject
       expect(status).to eq(500)
