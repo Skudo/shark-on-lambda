@@ -5,6 +5,7 @@
 - [Break] HTTP redirection now uses the status code `302`.
 - [Break] Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
 - [Break] Remove build rake tasks.
+- [Experimental] Added `SharkOnLambda.autoload`.
 - Added support for Rack-compatible middleware. 
 - `SharkOnLambda::BaseController` now acts more like `ActionController::BaseController`.
 - Support `ActiveModel::Errors` nested validation errors.

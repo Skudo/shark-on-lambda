@@ -43,6 +43,15 @@ module SharkOnLambda
       @application ||= Application.new
     end
 
+    def autoload(*root_directories, base_dir:, namespace: Object)
+      @loader ||= Autoloader::Loader.new(
+        base_dir: base_dir,
+        namespace: namespace
+      )
+      @loader.add_root_directories(*root_directories)
+      @loader.load!
+    end
+
     def config
       Configuration.instance
     end
