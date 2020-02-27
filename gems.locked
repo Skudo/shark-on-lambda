@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shark-on-lambda (0.6.10)
+    shark-on-lambda (1.0.0.beta004)
       actionpack
       activesupport
       jsonapi-rb
@@ -36,6 +36,7 @@ GEM
     builder (3.2.4)
     byebug (11.0.1)
     coderay (1.1.2)
+    colorize (0.8.1)
     concurrent-ruby (1.1.5)
     crass (1.0.6)
     diff-lcs (1.3)
@@ -43,6 +44,9 @@ GEM
     erubi (1.9.0)
     factory_bot (5.1.1)
       activesupport (>= 4.2.0)
+    fasterer (0.8.2)
+      colorize (~> 0.7)
+      ruby_parser (>= 3.14.1)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.4)
@@ -102,6 +106,9 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
     ruby-progressbar (1.10.1)
+    ruby_parser (3.14.2)
+      sexp_processor (~> 4.9)
+    sexp_processor (4.14.1)
     simplecov (0.17.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -121,6 +128,7 @@ DEPENDENCIES
   activemodel
   bundler
   factory_bot
+  fasterer
   pry
   pry-byebug
   rake
