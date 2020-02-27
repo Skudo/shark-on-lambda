@@ -22,7 +22,7 @@ RSpec.describe SharkOnLambda::RackAdapters::ApiGateway do
     context 'with a request from an ELB' do
       let!(:event) do
         attributes = attributes_for(:api_gateway_event)
-        attributes[:requestContext].merge!(elb: true)
+        attributes[:requestContext][:elb] = true
         attributes.deep_stringify_keys
       end
 
