@@ -61,7 +61,9 @@ module SharkOnLambda
     end
 
     def middleware
-      @middleware ||= ActionDispatch::MiddlewareStack.new
+      @middleware ||= ActionDispatch::MiddlewareStack.new do |middleware_stack|
+        middleware_stack.use Middleware::LambdaLogger
+      end
     end
 
     def root

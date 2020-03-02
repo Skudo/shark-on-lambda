@@ -2,7 +2,7 @@
 
 RSpec.describe SharkOnLambda::Application do
   let!(:body) do
-    Rack::BodyProxy.new('Hello, world!') do
+    Rack::BodyProxy.new(['Hello, world!']) do
     end
   end
   let!(:dispatcher_response) { [200, {}, body] }
