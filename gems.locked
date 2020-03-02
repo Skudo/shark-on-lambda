@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shark-on-lambda (1.0.0.rc1)
+    shark-on-lambda (1.0.0.rc2)
       actionpack
       activesupport
       jsonapi-rb
