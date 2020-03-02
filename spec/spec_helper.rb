@@ -13,6 +13,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     FactoryBot.find_definitions
+    SharkOnLambda.logger.level = :warn
   end
 
   # Enable flags like --only-failures and --next-failure

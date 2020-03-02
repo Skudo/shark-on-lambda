@@ -8,5 +8,15 @@ RSpec.describe SharkOnLambda::Configuration do
     expect(subject.instance).to be_a(SharkOnLambda::Configuration)
   end
 
+  describe '#middleware' do
+    subject { SharkOnLambda.config.middleware }
+
+    it 'includes SharkOnLambda::Middleware::LambdaLogger by default' do
+      expect(subject.middlewares).to(
+        include(SharkOnLambda::Middleware::LambdaLogger)
+      )
+    end
+  end
+
   # TODO: Add tests for SharkOnLambda::Configuration.
 end
