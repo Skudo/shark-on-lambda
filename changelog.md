@@ -1,5 +1,16 @@
 ## Changelog
 
+#### Unreleaesed
+
+- [Break] HTTP redirection now uses the status code `302`.
+- [Break] Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
+- [Break] Remove build rake tasks.
+- Added support for Rack-compatible middleware. 
+- `SharkOnLambda::BaseController` now acts more like `ActionController::BaseController`.
+- Support `ActiveModel::Errors` nested validation errors.
+- Added `SharkOnLambda::RSpec::Helpers` and `SharkOnLambda::RSpec::JsonapiHelpers`.
+- Moved to GitHub.
+
 #### 0.6.10
 
 - Upgrade `rack` for good measure.

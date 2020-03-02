@@ -7,9 +7,14 @@ FactoryBot.define do
   factory :api_gateway_event, class: OpenStruct do
     path { '/api/v1/mailing/1234' }
     resource { '/api/v1/mailing/{id}' }
-    httpMethod { 'GET' }
+    httpMethod { 'POST' }
     headers do
-      {}
+      {
+        'Accept-Encoding' => 'gzip, br, deflate',
+        'Authorization' => 'Bearer foobarblubb',
+        'Content-Length' => body.bytesize,
+        'Content-Type' => 'text/plain'
+      }
     end
     multiValueHeaders do
       headers.transform_values { |value| Array(value) }
@@ -62,7 +67,7 @@ FactoryBot.define do
         apiId: nil
       }
     end
-    body { nil }
+    body { 'Hello, world!' }
     isBase64Encoded { false }
   end
 end

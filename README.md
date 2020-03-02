@@ -1,6 +1,5 @@
 # shark-on-lambda
-
-[![Travis CI Build Status](https://travis-ci.org/Skudo/shark-on-lambda.svg?branch=develop)](https://travis-ci.org/Skudo/shark-on-lambda)
+[![GitHub Actions Test Status](https://github.com/Skudo/shark-on-lambda/workflows/Tests/badge.svg?branch=develop)](https://github.com/Skudo/shark-on-lambda/actions)
 [![CodeClimate Maintainability Score](https://api.codeclimate.com/v1/badges/fb0c16b3c6212f97b753/maintainability)](https://codeclimate.com/github/Skudo/shark-on-lambda/maintainability)
 
 `shark-on-lambda` provides a lightweight framework to write Ruby on AWS Lambda
@@ -24,8 +23,7 @@ maintaining a smaller memory footprint.
 
 ## Changelog
 
-### Pre-1.0
-* Supports events from the API Gateway.
+Have a look at the [actual changelog](changelog.md).
 
 ## Installation
 
@@ -50,11 +48,11 @@ are triggered by HTTP requests on the API Gateway. They also are responsible for
 responding with a well-formed response to the caller.
 
 ```ruby
-class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
+class MyHandler < SharkOnLambda::BaseHandler
 end
 ```
 
-By inheriting from `SharkOnLambda::ApiGateway::BaseHandler`, your own handler
+By inheriting from `SharkOnLambda::BaseHandler`, your own handler
 class is indirectly tied to your controller class by convention: It assumes 
 the controller name is `MyController` and it will dispatch events to that
 controller.
@@ -63,7 +61,7 @@ If you however bring your own class with a different name, you can configure
 your handler to use that controller instead:
 
 ```ruby
-class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
+class MyHandler < SharkOnLambda::BaseHandler
   self.controller_class = AnotherController
 end
 ```
@@ -72,7 +70,7 @@ All controller methods are going to be automagically mapped to class methods
 on the handler class. 
 
 ```ruby
-class MyController < SharkOnLambda::ApiGateway::BaseController
+class MyController < SharkOnLambda::BaseController
   def index
   end
   
@@ -80,7 +78,7 @@ class MyController < SharkOnLambda::ApiGateway::BaseController
   end
 end
 
-class MyHandler < SharkOnLambda::ApiGateway::BaseHandler
+class MyHandler < SharkOnLambda::BaseHandler
 end
 ```
 
@@ -103,7 +101,7 @@ functions you may know from Rails and `render` does not really support multiple
 renderers (yet).
 
 ```ruby
-class MyController < SharkOnLambda::ApiGateway::BaseController
+class MyController < SharkOnLambda::BaseController
   def index
     # Make the API Gateway respond with a 201 response saying "Hello, World!"
     # in the response body.
@@ -124,7 +122,7 @@ end
 ### _JSON API_-compliant controllers
 
 If you inherit your controller from 
-`SharkOnLambda::ApiGateway::JsonapiController`, `render` and `redirect_to` will
+`SharkOnLambda::JsonapiController`, `render` and `redirect_to` will
 create _JSON API_-compliant responses.
 
 You however __must__ have a serialiser for the objects you want to render.
@@ -141,7 +139,7 @@ _JSON API_ compatibility. Therefore, we expect the serialisers to be inherited
 from `::JSONAPI::Serializable::Resource` (or `::JSONAPI::Serializable::Error`).
 
 ```ruby
-class SomethingSerializer < ::JSONAPI::Serializable::Resource
+class SomethingSerializer < JSONAPI::Serializable::Resource
   type :somethings
   
   attributes :foo, :bar, :baz
