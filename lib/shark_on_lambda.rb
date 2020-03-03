@@ -52,6 +52,8 @@ module SharkOnLambda
     end
 
     def initialize!
+      enable_jsonapi!
+
       yield(config, secrets)
 
       Configuration.load(stage)
@@ -89,7 +91,13 @@ module SharkOnLambda
       Secrets.instance
     end
 
-    protected
+    private
+
+    def enable_jsonapi!
+      ::Mime::Type.register('application/vnd.api+json', :jsonapi)
+      ::ActionDispatch::Request.parameter_parsers[:jsonapi] =
+        ::ActionDispatch::Request.parameter_parsers[:json].dup
+    end
 
     def run_initializers
       initializers_path = root.join('config', 'initializers')
