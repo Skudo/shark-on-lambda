@@ -19,6 +19,10 @@ module SharkOnLambda
 
       private
 
+      def default_content_type
+        'application/vnd.api+json'
+      end
+
       def parsed_body
         @parsed_body ||= JSON.parse(response.body).with_indifferent_access
       end
