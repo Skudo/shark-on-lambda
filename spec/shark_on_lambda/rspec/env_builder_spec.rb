@@ -4,7 +4,11 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
   let!(:method) { 'GET' }
   let!(:controller) { 'best_controller' }
   let!(:action) { 'some_action' }
-  let!(:headers) { {} }
+  let!(:headers) do
+    {
+      'content-type' => 'application/json'
+    }
+  end
   let!(:params) { nil }
   let!(:builder_params) do
     {
@@ -86,8 +90,8 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
             expect(body).to eq(params.to_json)
           end
 
-          it 'sets the "Content-Type" header to "application/json"' do
-            expect(env['CONTENT_TYPE']).to eq('application/json')
+          it 'sets the "Content-Type" header' do
+            expect(env['CONTENT_TYPE']).to eq(headers['content-type'])
           end
 
           it 'sets the right "Content-Length" header' do

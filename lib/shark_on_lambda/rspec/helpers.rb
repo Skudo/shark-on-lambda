@@ -54,6 +54,10 @@ module SharkOnLambda
         end&.description
       end
 
+      def default_content_type
+        'application/json'
+      end
+
       def dispatch_request(env, skip_middleware: false)
         return SharkOnLambda.application.call(env) unless skip_middleware
 
@@ -66,10 +70,19 @@ module SharkOnLambda
         response.prepare!
       end
 
+      def headers_with_content_type(headers)
+        headers ||= {}
+        headers.transform_keys! { |key| key.to_s.downcase }
+        headers['content-type'] ||= default_content_type
+        headers
+      end
+
       def make_request(method, action, options = {})
         raise ArgumentError, 'Cannot find controller name.' unless controller?
 
         options = options.with_indifferent_access
+        options[:headers] = headers_with_content_type(options[:headers])
+
         env = build_env(method, action, options)
 
         status, headers, body = dispatch_request(
