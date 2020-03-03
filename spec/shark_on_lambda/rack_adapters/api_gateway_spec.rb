@@ -72,10 +72,13 @@ RSpec.describe SharkOnLambda::RackAdapters::ApiGateway do
     it 'contains all HTTP headers' do
       headers = event['headers'] || {}
 
-      expect(env['CONTENT_LENGTH']).to eq(headers['Content-Length'].to_s)
       expect(env['CONTENT_TYPE']).to eq(headers['Content-Type'])
       expect(env['HTTP_ACCEPT_ENCODING']).to eq(headers['Accept-Encoding'])
       expect(env['HTTP_AUTHORIZATION']).to eq(headers['Authorization'])
+    end
+
+    it 'set the right "content-length" header' do
+      expect(env['CONTENT_LENGTH']).to eq(event['body'].bytesize.to_s)
     end
 
     it 'contains the HTTP request method' do

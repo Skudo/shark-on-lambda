@@ -24,7 +24,8 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
 
   let!(:request_headers) do
     {
-      'Accept-Encoding': 'br, gzip, deflate'
+      'Accept-Encoding': 'br, gzip, deflate',
+      'Content-Type': 'text/plain'
     }
   end
   let!(:request_params) do
@@ -84,6 +85,39 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
           headers: request_headers,
           params: request_params
         )
+      end
+
+      context 'without a "content-type" header' do
+        let!(:request_headers) do
+          {
+            'Accept-Encoding': 'br, gzip, deflate'
+          }
+        end
+
+        it 'sets a default "content-type" header' do
+          expected_env = env_without_streams
+          expected_env['CONTENT_TYPE'] = 'application/json'
+
+          expect(SharkOnLambda.application).to(
+            receive(:call)
+              .with(hash_including(expected_env))
+              .and_call_original
+          )
+          subject
+        end
+      end
+
+      context 'with a "content-type" header' do
+        it 'uses the given "content-type" header' do
+          expected_env = env_without_streams
+
+          expect(SharkOnLambda.application).to(
+            receive(:call)
+              .with(hash_including(expected_env))
+              .and_call_original
+          )
+          subject
+        end
       end
 
       context 'without the "skip_middleware" parameter' do

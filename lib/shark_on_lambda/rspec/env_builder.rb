@@ -11,6 +11,7 @@ module SharkOnLambda
         @action = options.fetch(:action)
 
         @headers = (options[:headers] || {}).deep_stringify_keys
+        @headers.transform_keys! { |key| key.downcase }
         @params = options[:params]
 
         initialize_env
@@ -46,7 +47,7 @@ module SharkOnLambda
         body = params.to_json
 
         env['rack.input'] = StringIO.new(body).set_encoding(Encoding::BINARY)
-        env['CONTENT_TYPE'] = 'application/json'
+        env['CONTENT_TYPE'] = headers['content-type']
         env['CONTENT_LENGTH'] = body.bytesize.to_s
       end
 
