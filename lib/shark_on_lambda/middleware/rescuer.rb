@@ -29,7 +29,6 @@ module SharkOnLambda
       def rescue_standard_error(error)
         SharkOnLambda.logger.error(error.message)
         SharkOnLambda.logger.error(error.backtrace.join("\n"))
-        Honeybadger.notify(error) if defined?(Honeybadger)
 
         error_response(500, {}, error.message)
       end
