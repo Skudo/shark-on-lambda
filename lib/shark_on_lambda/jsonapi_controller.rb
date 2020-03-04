@@ -7,10 +7,13 @@ module SharkOnLambda
       return { data: {} }.to_json if object.nil?
 
       jsonapi_params = JsonapiParameters.new(params)
-      jsonapi_renderer = JsonapiRenderer.new
+      jsonapi_renderer = JsonapiRenderer.new(object)
       render_options = jsonapi_params.to_h.deep_merge(options)
 
-      jsonapi_renderer.render(object, render_options)
+      jsonapi_object = jsonapi_renderer.render(render_options)
+      response.status = jsonapi_renderer.status
+
+      jsonapi_object.to_json
     end
 
     def redirect_to(options = {}, response_status = {})

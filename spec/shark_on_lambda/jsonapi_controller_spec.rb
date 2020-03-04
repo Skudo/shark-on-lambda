@@ -58,6 +58,10 @@ RSpec.describe SharkOnLambda::JsonapiController do
         render plain: 'Second render'
       end
 
+      def render_unserializable
+        render Object.new
+      end
+
       def after_action_method; end
 
       def before_action_method; end
@@ -184,6 +188,30 @@ RSpec.describe SharkOnLambda::JsonapiController do
         expect(response.get_header('Content-Type')).to(
           eq('application/vnd.api+json; charset=utf-8')
         )
+      end
+    end
+
+    context 'with an unserialisable object' do
+      let!(:action) { 'render_unserializable' }
+
+      before { subject }
+
+      it 'sets the response status code to 500' do
+        expect(response.status).to eq(500)
+      end
+
+      it 'sets the right content-type header' do
+        expect(response.get_header('Content-Type')).to(
+          eq('application/vnd.api+json; charset=utf-8')
+        )
+      end
+
+      it 'sets an error body with a helpful message' do
+        errors = JSON.parse(response.body)['errors']
+        helpful_errors = errors.select do |error|
+          error['detail'].include?('Could not find serializer for: ')
+        end
+        expect(helpful_errors).to_not be_empty
       end
     end
   end
