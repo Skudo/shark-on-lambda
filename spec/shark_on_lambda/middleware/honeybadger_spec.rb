@@ -35,18 +35,50 @@ RSpec.describe SharkOnLambda::Middleware::Honeybadger do
   end
 
   context 'with a SharkOnLambda exception from the app' do
-    let!(:app_exception) do
-      SharkOnLambda::Errors[404].new('Nothing to see here.')
-    end
-    let!(:app) { ->(_env) { raise app_exception } }
+    context 'with a client error' do
+      let!(:app_exception) do
+        SharkOnLambda::Errors[404].new('Nothing to see here.')
+      end
+      let!(:app) { ->(_env) { raise app_exception } }
 
-    it 'raises the exception from the app' do
-      expect { response }.to raise_error(app_exception)
+      it 'raises the exception from the app' do
+        expect { response }.to raise_error(app_exception)
+      end
+
+      it 'does not trigger a Honeybadger notification' do
+        expect(Honeybadger).to_not receive(:notify)
+        expect { response }.to raise_error(app_exception)
+      end
     end
 
-    it 'does not trigger a Honeybadger notification' do
-      expect(Honeybadger).to_not receive(:notify)
-      expect { response }.to raise_error(app_exception)
+    context 'with a server error' do
+      let!(:app_exception) do
+        SharkOnLambda::Errors[500].new('Nothing to see here.')
+      end
+      let!(:app) { ->(_env) { raise app_exception } }
+
+      it 'raises the exception from the app' do
+        expect { response }.to raise_error(app_exception)
+      end
+
+      it 'triggers a Honeybadger notification' do
+        expect(Honeybadger).to receive(:notify).with(app_exception, anything)
+        expect { response }.to raise_error(app_exception)
+      end
+
+      it 'includes additional information in the Honeybadger notification' do
+        expected_options = {
+          tags: tags,
+          controller: env['shark.controller'],
+          action: env['shark.action'],
+          parameters: env['action_dispatch.request.parameters']
+        }
+
+        expect(Honeybadger).to(
+          receive(:notify).with(app_exception, hash_including(expected_options))
+        )
+        expect { response }.to raise_error(app_exception)
+      end
     end
   end
 
