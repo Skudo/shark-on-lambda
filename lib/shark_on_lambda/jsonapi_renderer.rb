@@ -2,21 +2,27 @@
 
 module SharkOnLambda
   class JsonapiRenderer
-    def initialize(renderer: nil)
+    attr_reader :object, :status
+
+    def initialize(object, renderer: nil)
+      @object = object
       @renderer = renderer || JSONAPI::Serializable::Renderer.new
+
+      @status = 200
     end
 
-    def render(object, options = {})
-      object = transform_active_model_errors(object)
+    def render(options = {})
+      @status = options[:status] if options[:status]
+      object_to_render = transform_active_model_errors(object)
 
-      unless renderable?(object, options)
-        return handle_unrenderable_objects(object, options)
+      unless renderable?(object_to_render, options)
+        return handle_unrenderable_objects(object_to_render, options)
       end
 
-      if error?(object)
-        render_errors(object, options).to_json
+      if error?(object_to_render)
+        render_errors(object_to_render, options).to_json
       else
-        render_success(object, options).to_json
+        render_success(object_to_render, options).to_json
       end
     end
 
@@ -54,6 +60,7 @@ module SharkOnLambda
         Errors[500].new("Could not find serializer for: #{item.name}.")
       end
 
+      @status = 500
       render_errors(errors, options)
     end
 
