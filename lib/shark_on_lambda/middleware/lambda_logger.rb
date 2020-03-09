@@ -10,9 +10,7 @@ module SharkOnLambda
         @logger = logger
       end
 
-      private
-
-      def _call(env)
+      def call!(env)
         start_time = Time.now
         response = app.call(env)
         end_time = Time.now
@@ -26,6 +24,8 @@ module SharkOnLambda
 
         response
       end
+
+      private
 
       def body_size(body)
         size = 0

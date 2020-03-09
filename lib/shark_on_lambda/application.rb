@@ -3,12 +3,10 @@
 module SharkOnLambda
   class Application
     def call(env)
-      dup.send('_call', env)
+      dup.call!(env)
     end
 
-    private
-
-    def _call(env)
+    def call!(env)
       dispatcher = SharkOnLambda.config.dispatcher
       middleware_stack = SharkOnLambda.config.middleware.build(dispatcher)
       middleware_stack.call(env)
