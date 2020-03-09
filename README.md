@@ -30,7 +30,7 @@ Have a look at the [actual changelog](changelog.md).
 Add this line to your application's `gems.rb`:
 
 ```ruby
-gem 'shark_on_lambda'
+gem 'shark-on-lambda'
 ```
 
 And then execute:
@@ -39,7 +39,7 @@ And then execute:
 
 Or install it yourself:
 
-    $ gem install shark_on_lambda
+    $ gem install shark-on-lambda
 
 ## Handlers
 
@@ -48,11 +48,11 @@ are triggered by HTTP requests on the API Gateway. They also are responsible for
 responding with a well-formed response to the caller.
 
 ```ruby
-class MyHandler < SharkOnLambda::BaseHandler
+class MyHandler < SharkOnLambda::ApiGatewayHandler
 end
 ```
 
-By inheriting from `SharkOnLambda::BaseHandler`, your own handler
+By inheriting from `SharkOnLambda::ApiGatewayHandler`, your own handler
 class is indirectly tied to your controller class by convention: It assumes 
 the controller name is `MyController` and it will dispatch events to that
 controller.
@@ -78,7 +78,7 @@ class MyController < SharkOnLambda::BaseController
   end
 end
 
-class MyHandler < SharkOnLambda::BaseHandler
+class MyHandler < SharkOnLambda::ApiGatewayHandler
 end
 ```
 
@@ -89,16 +89,13 @@ handler class method is called.
 
 ## Controllers
 
-Controllers are similar to Rails controllers: In addition to having access to 
-the AWS Lambda `event` and `context` objects, you also have access to `params`, 
-`request`, and `response` objects that are derived from the `event` object.
+Controllers are similar to Rails controllers: You have access to `params`, 
+`request`, and `response` objects that contain informatoni retrieved from the
+AWS Lambda `event` object.
 
 ### "Basic" controllers
 
-You also have access to the `render` and `redirect_to` methods __that are not as
-powerful as the Rails equivalent by far__. There are none of the `render_*`
-functions you may know from Rails and `render` does not really support multiple
-renderers (yet).
+You also have access to the `render` and `redirect_to`.
 
 ```ruby
 class MyController < SharkOnLambda::BaseController
@@ -113,17 +110,19 @@ class MyController < SharkOnLambda::BaseController
   def show
     # Does what you think it does.
     #
-    # The default status code for `redirect_to` is 307.    
-    redirect_to 'https://github.com', status: 302
+    # The default status code for `redirect_to` is 302.    
+    redirect_to 'https://github.com', status: 307
   end
 end
 ```
 
+`before_action`, `around_action`, and `after_action` filters also are available,
+as well as `rescue_from`.
+
 ### _JSON API_-compliant controllers
 
-If you inherit your controller from 
-`SharkOnLambda::JsonapiController`, `render` and `redirect_to` will
-create _JSON API_-compliant responses.
+If you inherit your controller from `SharkOnLambda::JsonapiController`, 
+`render` and `redirect_to` will create _JSON API_-compliant responses.
 
 You however __must__ have a serialiser for the objects you want to render.
 Otherwise, rendering will fail and you will receive an _Internal Server Error_
@@ -195,6 +194,53 @@ If `SharkOnLambda.config.stage` was set inside the block passed to
 `.initialize!`, configurations and secrets for that stage will be merged into
 the default set (the `default` node in the YAML files) of configuration and 
 secrets, overwriting values where applicable.
+
+## Test helpers
+
+By including `SharkOnLambda::RSpec::Helpers` in your RSpec test suite, you can 
+use `delete`, `get`, `patch`, `post`, and `put` methods, which will return
+a `Rack::MockResponse` object. You can also access that response object in your
+test examples by calling `response`, but only after you've called either of the
+aforementioned methods. Otherwise, an exception will be raised.
+
+You can include the test helpers like this in your `spec/spec_helper.rb`.
+
+```ruby
+RSpec.configure do |config|
+  config.include SharkOnLambda::RSpec::Helpers
+end
+```
+
+### _JSON API_ helpers
+
+By including `SharkOnLambda::RSpec::JsonapiHelpers`, you gain all the goodies
+from `SharkOnLambda::RSpec::Helpers` _and_ access to `jsonapi_data` and
+`jsonapi_errors` methods, which contain the `data` and `errors` keys of the
+parsed response body respectively. In addition to that, there is
+`jsonapi_attributes`, which returns the `attributes` key from `jsonapi_data`.
+
+## _Rack_ compatibility
+
+As `SharkOnLambda.application` is a _Rack_-compatible application, treating it
+as such and using existing _Rack_ middleware is straightforward. 
+
+### Using _Rack_ middleware
+
+The middleware stack can be found at `SharkOnLambda.config.middleware`. Adding
+middleware to your stack can be either done by calling `#use`:
+
+```ruby
+SharkOnLambda.config.middleware.use Your::Middleware
+```
+
+You can also just set up your middleware stack during your 
+`SharkOnLambda.initialize!` call:
+
+```ruby
+SharkOnLambda.initialize! do |config, secrets|
+  config.middleware.use Your::Middleware
+end
+```
 
 ## Development
 
