@@ -19,7 +19,7 @@ module SharkOnLambda
           'body' => body_content
         }
         response['isBase64Encoded'] = false if elb?
-        response
+        response.with_indifferent_access
       end
 
       def env
