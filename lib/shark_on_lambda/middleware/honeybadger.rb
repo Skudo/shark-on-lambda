@@ -11,15 +11,15 @@ module SharkOnLambda
         @tags = tags
       end
 
-      private
-
-      def _call(env)
+      def call!(env)
         app.call(env)
       rescue StandardError => e
         notify(e, env) unless shark_error?(e) && client_error?(e)
 
         raise e
       end
+
+      private
 
       def client_error?(error)
         error.respond_to?(:status) && error.status < 500
