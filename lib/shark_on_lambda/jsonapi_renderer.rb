@@ -20,9 +20,9 @@ module SharkOnLambda
       end
 
       if error?(object_to_render)
-        render_errors(object_to_render, options).to_json
+        render_errors(object_to_render, options)
       else
-        render_success(object_to_render, options).to_json
+        render_success(object_to_render, options)
       end
     end
 

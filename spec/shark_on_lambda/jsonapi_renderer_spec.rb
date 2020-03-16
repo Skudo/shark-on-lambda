@@ -1,8 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::JsonapiRenderer do
-  class CustomObject; end
-  class CustomObjectSerializer; end
+  shared_examples 'renders a hash' do
+    it 'renders a hash' do
+      expect(subject).to be_a(Hash)
+    end
+  end
+
+  class CustomObject
+    def id
+      SecureRandom.uuid
+    end
+  end
+  class CustomObjectSerializer < JSONAPI::Serializable::Resource; end
 
   let!(:renderer) { JSONAPI::Serializable::Renderer.new }
   let!(:params) { SharkOnLambda::JsonapiParameters.new.to_h }
@@ -19,6 +29,8 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     context 'with a serializable non-error object' do
       let!(:object) { CustomObject.new }
 
+      include_examples 'renders a hash'
+
       it 'renders the object using the renderer' do
         expect(renderer).to receive(:render).with(object, params.to_h)
         subject
@@ -28,14 +40,18 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     context 'with an array of serializable non-error objects' do
       let!(:object) { [CustomObject.new, CustomObject.new] }
 
-      it 'renders the arry of objects using the renderer' do
+      include_examples 'renders a hash'
+
+      it 'renders the array of objects using the renderer' do
         expect(renderer).to receive(:render).with(object, params.to_h)
         subject
       end
     end
 
     context 'with a serializable error object' do
-      let!(:object) { SharkOnLambda::Errors::Base.new }
+      let!(:object) { SharkOnLambda::Errors::NotFound.new }
+
+      include_examples 'renders a hash'
 
       it 'renders the error object using the renderer' do
         expect(renderer).to receive(:render_errors).with([object], params.to_h)
@@ -46,10 +62,12 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     context 'with an array of serializable error objects' do
       let!(:object) do
         [
-          SharkOnLambda::Errors::Base.new,
-          SharkOnLambda::Errors::Base.new
+          SharkOnLambda::Errors::NotFound.new,
+          SharkOnLambda::Errors::NotFound.new
         ]
       end
+
+      include_examples 'renders a hash'
 
       it 'renders the array of errors object using the renderer' do
         expect(renderer).to receive(:render_errors).with(object, params.to_h)
@@ -59,6 +77,8 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
 
     context 'with an unserializable object' do
       let!(:object) { 'Hello, world!' }
+
+      include_examples 'renders a hash'
 
       it 'renders an Internal Server Error object' do
         errors = subject[:errors]
@@ -75,6 +95,8 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
           1
         ]
       end
+
+      include_examples 'renders a hash'
 
       it 'renders Internal Server Error objects' do
         errors = subject[:errors]
@@ -108,8 +130,10 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
         errors
       end
 
+      include_examples 'renders a hash'
+
       it 'renders an array of Unprocessable Entity errors' do
-        errors = JSON.parse(subject).with_indifferent_access[:errors]
+        errors = subject[:errors]
         expect(errors.all? { |error| error[:status] == 422 }).to eq(true)
       end
 
@@ -118,7 +142,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
           attribute_name = validation_error[:attribute].to_s.split('.').last
           "`#{attribute_name}' #{validation_error[:message]}"
         end
-        errors = JSON.parse(subject).with_indifferent_access[:errors]
+        errors = subject[:errors]
         expect(errors.map { |error| error[:detail] }).to eq(expectation)
       end
 
@@ -128,7 +152,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
           attribute_path = attribute_path.gsub(/\[(\d+)\]/, '/\1')
           "/data/attributes/#{attribute_path}"
         end
-        errors = JSON.parse(subject).with_indifferent_access[:errors]
+        errors = subject[:errors]
         error_pointers = errors.map { |error| error[:source][:pointer] }
         expect(error_pointers).to eq(expectation)
       end
