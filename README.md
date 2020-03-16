@@ -25,6 +25,13 @@ maintaining a smaller memory footprint.
 
 Have a look at the [actual changelog](changelog.md).
 
+## Upgrading?
+
+If you are upgrading from a previous version of `shark-on-lambda`, these
+upgrade guides might be of some help to you.
+
+* [Upgrading from `v0.6.x` to `v1.x`](doc/upgrade-from-0.6.x-to-1.x.md)
+
 ## Installation
 
 Add this line to your application's `gems.rb`:
