@@ -39,7 +39,8 @@ module SharkOnLambda
           controller: controller_name,
           action: action,
           headers: options[:headers],
-          params: options[:params]
+          params: options[:params],
+          path_parameters: options[:path_parameters]
         )
         env_builder.build
       end
