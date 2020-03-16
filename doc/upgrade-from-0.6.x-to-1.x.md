@@ -1,19 +1,19 @@
-## Upgrading from version `0.6.x` to version `1.x`
+# Upgrading from version `0.6.x` to version `1.x`
 
-### Mandatory changes
+## Mandatory changes
 
-#### `SharkOnLambda::ApiGateway::*` => `SharkOnLambda::*`
+### `SharkOnLambda::ApiGateway::*` => `SharkOnLambda::*`
 
 The `ApiGateway` module was removed in favour of a shallower hierarchy, because
 `shark-on-lambda` only really does lifting work in an HTTP request context.
 
-#### `SharkOnLambda::ApiGateway::BaseHandler` => `SharkOnLambda::ApiGatewayHandler`
+### `SharkOnLambda::ApiGateway::BaseHandler` => `SharkOnLambda::ApiGatewayHandler`
 
 In an attempt to make the ties to the _API Gateway_ a bit more explicit, the
 handler base class now is `SharkOnLambda::ApiGatewayHandler` instead of what
 might be expected to be `SharkOnLambda::BaseHandler`.  
 
-#### Use `SharkOnLambda::RSpec::JsonapiHelpers` (or `SharkOnLambda::RSpec::Helpers`)
+### Use `SharkOnLambda::RSpec::JsonapiHelpers` (or `SharkOnLambda::RSpec::Helpers`)
 
 Until now, making a request to your application has involved building your own
 _API Gateway_ event object and then passing it to your handler/controller.
@@ -62,9 +62,9 @@ RSpec.configure do |config|
 end
 ```
 
-### Recommended changes
+## Recommended changes
 
-#### Move to a _Rack_-compatible implementation for CORS headers
+### Move to a _Rack_-compatible implementation for CORS headers
 
 Until now, the way to add CORS headers prior to sending the response to the 
 _API Gateway_ has been to "decorate" the `#call` method in your handler, e. g.
@@ -95,7 +95,7 @@ This _still_ works for the time being, but it is recommended to switch to an
 approach based on using _Rack_ middleware, e. g. `rack-cors` or implementing
 your own middleware.
 
-#### Use `SharkOnLambda::Middleware::JsonapiRescuer` (or `SharkOnLambda::Middleware::Rescuer`)
+### Use `SharkOnLambda::Middleware::JsonapiRescuer` (or `SharkOnLambda::Middleware::Rescuer`)
 
 Until now, `shark-on-lambda` has caught all uncaught exceptions before building
 the response object for _API Gateway_, turning those exceptions into sensible
