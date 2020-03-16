@@ -10,12 +10,10 @@ module SharkOnLambda
       end
 
       def call(env)
-        dup.send('_call', env)
+        dup.call!(env)
       end
 
-      private
-
-      def _call(_env)
+      def call!(_env)
         raise NotImplementedError
       end
     end

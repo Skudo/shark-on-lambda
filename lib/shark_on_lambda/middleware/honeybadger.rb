@@ -11,24 +11,27 @@ module SharkOnLambda
         @tags = tags
       end
 
-      private
-
-      def _call(env)
-        @env = env
+      def call!(env)
         app.call(env)
       rescue StandardError => e
-        notify(e) unless shark_error?(e)
+        notify(e, env) unless shark_error?(e) && client_error?(e)
 
         raise e
       end
 
-      def notify(error)
+      private
+
+      def client_error?(error)
+        error.respond_to?(:status) && error.status < 500
+      end
+
+      def notify(error, env)
         ::Honeybadger.notify(
           error,
           tags: tags,
-          controller: @env['shark.controller'],
-          action: @env['shark.action'],
-          parameters: @env['action_dispatch.request.parameters']
+          controller: env['shark.controller'],
+          action: env['shark.action'],
+          parameters: env['action_dispatch.request.parameters']
         )
       end
 

@@ -2,15 +2,14 @@
 /.yardoc
 /_yardoc/
 /coverage/
-/doc/
 /pkg/
 /spec/reports/
 /tmp/
+
+gems.locked
 
 # rspec failure tracking
 .rspec_status
 
 # Add gems to `vendor/cache`
 vendor/cache/*
-!vendor/cache/bima*.gem
-!vendor/cache/shark*.gem

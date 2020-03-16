@@ -3,15 +3,15 @@
 module SharkOnLambda
   module Middleware
     class Rescuer < Base
-      private
-
-      def _call(env)
+      def call!(env)
         app.call(env)
       rescue Errors::Base => e
         rescue_shark_error(e)
       rescue StandardError => e
         rescue_standard_error(e)
       end
+
+      private
 
       def error_response(status, headers, message)
         response_body = Rack::BodyProxy.new([message]) do

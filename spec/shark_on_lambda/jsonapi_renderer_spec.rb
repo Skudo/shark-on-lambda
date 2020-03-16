@@ -10,9 +10,10 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
   describe '#render' do
     subject do
       instance = SharkOnLambda::JsonapiRenderer.new(
+        object,
         renderer: renderer
       )
-      instance.render(object, params)
+      instance.render(params)
     end
 
     context 'with a serializable non-error object' do

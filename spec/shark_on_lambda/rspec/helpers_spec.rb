@@ -34,6 +34,12 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
       baz: 'blubb'
     }
   end
+  let!(:request_path_parameters) do
+    {
+      id: 1,
+      type: 'things'
+    }
+  end
 
   let!(:response_status) { 200 }
   let!(:response_body) { 'Hello, world!' }
@@ -73,7 +79,8 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
           controller: controller_name,
           action: action,
           headers: request_headers,
-          params: request_params
+          params: request_params,
+          path_parameters: request_path_parameters
         )
         builder.build.reject { |key, _| key.in?(%w[rack.errors rack.input]) }
       end
@@ -83,7 +90,8 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
           http_verb,
           action,
           headers: request_headers,
-          params: request_params
+          params: request_params,
+          path_parameters: request_path_parameters
         )
       end
 
@@ -145,6 +153,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
             action,
             headers: request_headers,
             params: request_params,
+            path_parameters: request_path_parameters,
             skip_middleware: true
           )
         end
