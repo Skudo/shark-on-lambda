@@ -1,5 +1,11 @@
 ## Changelog
 
+#### Unreleased
+
+#### 1.0.1
+
+- [Fix] `Jsonapi::Renderer#render` should always return a hash.
+
 #### 1.0.0
 
 - [Break] HTTP redirection now uses the status code `302`.
