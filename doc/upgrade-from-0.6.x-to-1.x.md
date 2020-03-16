@@ -49,6 +49,14 @@ RSpec.describe MyController do
 end
 ```
 
+If you, for some reason, want to distinguish between `params` and 
+`path_parameters`, you can also pass in `path_parameters` using the
+`path_parameters:` keyword argument like this:
+
+```ruby
+get :show, headers: headers, params: params, path_parameters: path_parameters
+```
+
 Using `SharkOnLambda::RSpec::JsonapiHelpers` or `SharkOnLambda::RSpec::Helpers`
 also lets you access the `response` object in your test examples. This object
 is an instance of `Rack::MockResponse`, which you might be familiar with from
