@@ -1,6 +1,6 @@
 ## Changelog
 
-#### Unreleaesed
+#### 1.0.0
 
 - [Break] HTTP redirection now uses the status code `302`.
 - [Break] Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
