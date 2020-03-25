@@ -60,6 +60,11 @@ module SharkOnLambda
       @dispatcher ||= Dispatcher.new
     end
 
+    # use ActionDispatch::Routing for dispatching
+    def enable_routing
+      self.dispatcher = routes
+    end
+
     def middleware
       @middleware ||= ActionDispatch::MiddlewareStack.new do |middleware_stack|
         middleware_stack.use Middleware::LambdaLogger
@@ -72,6 +77,12 @@ module SharkOnLambda
 
     def root=(new_root)
       @root = Pathname.new(new_root)
+    end
+
+    def routes
+      @routes ||= ActionDispatch::Routing::RouteSet.new_with_config(
+        ActionDispatch::Routing::RouteSet::Config.new(nil, true)
+      )
     end
 
     def stage

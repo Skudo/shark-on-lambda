@@ -37,7 +37,7 @@ module SharkOnLambda
 
     attr_writer :logger
 
-    def_instance_delegators :config, :root, :stage
+    def_instance_delegators :config, :root, :routes, :stage
 
     def application
       @application ||= Application.new
