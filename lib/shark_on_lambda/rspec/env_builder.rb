@@ -4,12 +4,13 @@ module SharkOnLambda
   module RSpec
     class EnvBuilder
       attr_reader :action, :controller, :headers, :method
-      attr_reader :params, :path_parameters
+      attr_reader :params, :path_info, :path_parameters
 
       def initialize(options = {})
         @method = options.fetch(:method).to_s.upcase
-        @controller = options.fetch(:controller)
-        @action = options.fetch(:action)
+        @controller = options[:controller]
+        @action = options[:action]
+        @path_info = options[:path_info] || '/'
 
         @headers = (options[:headers] || {}).deep_stringify_keys
         @headers.transform_keys!(&:downcase)
@@ -54,7 +55,7 @@ module SharkOnLambda
 
       def initialize_env
         @env = Rack::MockRequest.env_for(
-          'https://localhost:9292',
+          URI.join('https://localhost:9292', path_info).to_s,
           method: method,
           params: params,
           'shark.controller' => controller,

@@ -3,24 +3,24 @@
 module SharkOnLambda
   module RSpec
     module Helpers
-      def delete(controller_method, options = {})
-        make_request('DELETE', controller_method, options)
+      def delete(action, options = {})
+        make_request('DELETE', action, options)
       end
 
-      def get(controller_method, options = {})
-        make_request('GET', controller_method, options)
+      def get(action, options = {})
+        make_request('GET', action, options)
       end
 
-      def patch(controller_method, options = {})
-        make_request('PATCH', controller_method, options)
+      def patch(action, options = {})
+        make_request('PATCH', action, options)
       end
 
-      def post(controller_method, options = {})
-        make_request('POST', controller_method, options)
+      def post(action, options = {})
+        make_request('POST', action, options)
       end
 
-      def put(controller_method, options = {})
-        make_request('PUT', controller_method, options)
+      def put(action, options = {})
+        make_request('PUT', action, options)
       end
 
       def response
@@ -34,15 +34,23 @@ module SharkOnLambda
       private
 
       def build_env(method, action, options = {})
-        env_builder = EnvBuilder.new(
+        build_options = {
           method: method,
-          controller: controller_name,
-          action: action,
           headers: options[:headers],
           params: options[:params],
           path_parameters: options[:path_parameters]
-        )
-        env_builder.build
+        }
+
+        if controller?
+          build_options.merge!(
+            controller: controller_name,
+            action: action)
+        end
+        if path_info?(action)
+          build_options.merge!(path_info: action)
+        end
+
+        EnvBuilder.new(build_options).build
       end
 
       def controller?
@@ -79,7 +87,9 @@ module SharkOnLambda
       end
 
       def make_request(method, action, options = {})
-        raise ArgumentError, 'Cannot find controller name.' unless controller?
+        if  !path_info?(action) && !controller?
+          raise ArgumentError, 'Cannot find controller name.'
+        end
 
         options = options.with_indifferent_access
         options[:headers] = headers_with_content_type(options[:headers])
@@ -92,6 +102,12 @@ module SharkOnLambda
         )
         errors = env['rack.errors']
         @response = Rack::MockResponse.new(status, headers, body, errors)
+      end
+
+      def path_info?(action)
+        action.is_a?(String) && URI.parse(action).path.present?
+      rescue
+        false
       end
     end
   end
