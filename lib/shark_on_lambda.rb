@@ -87,6 +87,15 @@ module SharkOnLambda
       true
     end
 
+    # TODO this should probably be somewhere else
+    def run(event:, context:)
+      adapter = RackAdapters::ApiGateway.new(context: context, event: event)
+      env = adapter.env
+
+      status, headers, body = application.call(env)
+      adapter.build_response(status, headers, body)
+    end
+
     def secrets
       Secrets.instance
     end
