@@ -29,17 +29,18 @@ module SharkOnLambda
       end
 
       def method_missing(action, *args, &_block)
-        return super unless respond_to_missing?(action)
+        return super unless respond_to_missing?(action, false)
 
         new.call(action, *args)
       end
 
-      def respond_to_missing?(name, _include_all = false)
-        controller_action?(name)
+      def respond_to_missing?(name, include_all)
+        controller_action?(name) || super
       end
     end
 
     attr_reader :application, :env
+
     delegate :context, :event, to: :adapter
 
     def initialize

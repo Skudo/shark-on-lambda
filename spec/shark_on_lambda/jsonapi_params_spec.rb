@@ -75,7 +75,7 @@ RSpec.describe SharkOnLambda::JsonapiParameters do
     let!(:serializer_class) { SharkOnLambda::Errors::BaseSerializer }
     let!(:previously_known_classes) do
       {
-        Exception: STDOUT
+        Exception: $stdout
       }.with_indifferent_access
     end
     let!(:new_known_classes) do
