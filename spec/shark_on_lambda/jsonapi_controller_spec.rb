@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::JsonapiController do
+RSpec.describe TestApplication::JsonapiController do
   let!(:action) { 'index' }
   let!(:rack_env) do
     {
@@ -11,75 +11,7 @@ RSpec.describe SharkOnLambda::JsonapiController do
   let!(:request) { SharkOnLambda::Request.new(rack_env) }
   let!(:response) { SharkOnLambda::Response.new }
 
-  let!(:controller_class) do
-    Class.new(SharkOnLambda::JsonapiController) do
-      before_action :before_action_method
-      after_action :after_action_method
-
-      def after_action_method; end
-
-      def before_action_method; end
-
-      def index; end
-
-      def invalid_redirect
-        redirect_to nil
-      end
-
-      def redirect_once
-        redirect_to 'https://example.com'
-      end
-
-      def redirect_then_render
-        redirect_to 'https://example.com'
-        render plain: 'Hello, world!'
-      end
-
-      def redirect_twice
-        redirect_to 'https://example.com'
-        redirect_to 'https://example.com'
-      end
-
-      def redirect_with_304
-        redirect_to 'https://example.com', status: 304
-      end
-
-      def render_nil
-        render nil
-      end
-
-      def render_then_redirect
-        render plain: 'Hello, world!'
-        redirect_to 'https://example.com'
-      end
-
-      def render_twice
-        render plain: 'First render'
-        render plain: 'Second render'
-      end
-
-      def render_unserializable
-        render Object.new
-      end
-
-      def after_action_method; end
-
-      def before_action_method; end
-    end
-  end
-
-  it 'is a direct successor to BaseController' do
-    subject = SharkOnLambda::JsonapiController
-    expectation = [
-      subject,
-      SharkOnLambda::BaseController
-    ]
-    expect(subject.ancestors[0..1]).to eq(expectation)
-  end
-
-  subject do
-    controller_class.dispatch(action, request, response)
-  end
+  subject { described_class.dispatch(action, request, response) }
 
   describe '#redirect_to' do
     let!(:action) { 'redirect_once' }

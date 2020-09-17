@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::BaseController do
+RSpec.describe TestApplication::BaseController do
   let!(:action) { 'index' }
   let!(:rack_env) do
     {
@@ -11,78 +11,7 @@ RSpec.describe SharkOnLambda::BaseController do
   let!(:request) { SharkOnLambda::Request.new(rack_env) }
   let!(:response) { SharkOnLambda::Response.new }
 
-  let!(:controller_class) do
-    Class.new(SharkOnLambda::BaseController) do
-      before_action :before_action_method
-      after_action :after_action_method
-
-      rescue_from HandledException do
-        render plain: 'I was taken care of.', status: 400
-      end
-
-      def after_action_method; end
-
-      def before_action_method; end
-
-      def invalid_redirect
-        redirect_to nil
-      end
-
-      def redirect_once
-        redirect_to 'https://example.com'
-      end
-
-      def redirect_then_render
-        redirect_to 'https://example.com'
-        render plain: 'Hello, world!'
-      end
-
-      def redirect_twice
-        redirect_to 'https://example.com'
-        redirect_to 'https://example.com'
-      end
-
-      def redirect_with_304
-        redirect_to 'https://example.com', status: 304
-      end
-
-      def render_then_redirect
-        render plain: 'Hello, world!'
-        redirect_to 'https://example.com'
-      end
-
-      def render_twice
-        render plain: 'First render'
-        render plain: 'Second render'
-      end
-
-      def explode_with_handled_exception
-        raise HandledException, 'I was taken care of.'
-      end
-
-      def explode_with_unhandled_exception
-        raise UnhandledException, 'I was not taken care of.'
-      end
-
-      def after_action_method; end
-
-      def before_action_method; end
-    end
-  end
-
-  subject do
-    controller_class.dispatch(action, request, response)
-  end
-
-  before :all do
-    class HandledException < StandardError; end
-    class UnhandledException < StandardError; end
-  end
-
-  after :all do
-    Object.send(:remove_const, :HandledException)
-    Object.send(:remove_const, :UnhandledException)
-  end
+  subject { described_class.dispatch(action, request, response) }
 
   describe '.dispatch' do
     context 'without a matching instance method' do
@@ -113,7 +42,8 @@ RSpec.describe SharkOnLambda::BaseController do
 
         it 'throws an exception' do
           expect { subject }.to(
-            raise_error(UnhandledException, 'I was not taken care of.')
+            raise_error(TestApplication::UnhandledException,
+                        'I was not taken care of.')
           )
         end
       end

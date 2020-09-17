@@ -58,16 +58,6 @@ RSpec.describe SharkOnLambda::Middleware::Honeybadger do
     SharkOnLambda::Middleware::Honeybadger.new(app, tags: tags)
   end
 
-  before :all do
-    module Honeybadger
-      def self.notify(_error, _options = {}); end
-    end
-  end
-
-  after :all do
-    Object.send(:remove_const, :Honeybadger)
-  end
-
   context 'with no exceptions from the app' do
     let!(:app_response) { [200, {}, ['Hello, world!']] }
     let!(:app) { ->(_env) { app_response } }

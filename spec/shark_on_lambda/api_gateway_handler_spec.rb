@@ -1,30 +1,16 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::ApiGatewayHandler do
+RSpec.describe TestApplication::ApiGatewayHandler do
   let!(:context) { attributes_for(:api_gateway_context) }
   let!(:event) { attributes_for(:api_gateway_event).deep_stringify_keys }
 
-  before :all do
-    class ApiGatewayController < SharkOnLambda::BaseController
-      def index
-        render plain: 'Hello, world!'
-      end
-    end
-
-    class ApiGatewayHandler < SharkOnLambda::ApiGatewayHandler
-    end
-  end
-
-  after :all do
-    Object.send(:remove_const, :ApiGatewayController)
-    Object.send(:remove_const, :ApiGatewayHandler)
-  end
+  let!(:controller_class) { TestApplication::ApiGatewayController }
 
   context 'when calling a class method that matches a controller action' do
-    subject { ApiGatewayHandler.index(context: context, event: event) }
+    subject { described_class.index(context: context, event: event) }
 
     it 'ultimately calls the right controller action' do
-      expect_any_instance_of(ApiGatewayController).to receive(:index)
+      expect_any_instance_of(controller_class).to receive(:index)
       subject
     end
 
@@ -36,7 +22,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
   end
 
   context 'when calling a class method without a matching controller action' do
-    subject { ApiGatewayHandler.does_not_exist(context: context, event: event) }
+    subject { described_class.does_not_exist(context: context, event: event) }
 
     it 'raises a NoMethodError exception' do
       expect { subject }.to raise_error(NoMethodError)
@@ -44,7 +30,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
   end
 
   describe '.controller_action?' do
-    subject { ApiGatewayHandler.controller_action?(action) }
+    subject { described_class.controller_action?(action) }
 
     context 'with a matching controller action' do
       let!(:action) { 'index' }
@@ -64,16 +50,16 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
   end
 
   describe '.controller_class_name' do
-    subject { ApiGatewayHandler.controller_class_name }
+    subject { described_class.controller_class_name }
 
     it 'returns the inferred controller class name' do
-      expect(subject).to eq('ApiGatewayController')
+      expect(subject).to eq('TestApplication::ApiGatewayController')
     end
   end
 
   describe '#call' do
     subject do
-      instance = ApiGatewayHandler.new
+      instance = described_class.new
       instance.call(action, event: event, context: context)
     end
 
@@ -81,7 +67,7 @@ RSpec.describe SharkOnLambda::ApiGatewayHandler do
       let!(:action) { 'index' }
 
       it 'ultimately calls the right controller action' do
-        expect_any_instance_of(ApiGatewayController).to receive(:index)
+        expect_any_instance_of(controller_class).to receive(:index)
         subject
       end
 
