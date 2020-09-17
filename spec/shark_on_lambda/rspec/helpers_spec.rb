@@ -6,7 +6,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
       include SharkOnLambda::RSpec::Helpers
 
       def self.controller_name
-        'foo_controller'
+        'test_application/foo_controller'
       end
 
       def self.description
@@ -50,18 +50,6 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
     }
   end
   let!(:response) { [response_status, response_headers, [response_body]] }
-
-  before :all do
-    class FooController < SharkOnLambda::BaseController
-      def some_action
-        render plain: response_body
-      end
-    end
-  end
-
-  after :all do
-    Object.send(:remove_const, :FooController)
-  end
 
   before do
     allow(SharkOnLambda.config.dispatcher).to(
@@ -175,7 +163,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
               .with(hash_including(env_without_streams))
               .and_call_original
           )
-          expect(FooController).to(
+          expect(TestApplication::FooController).to(
             receive(:dispatch).with(action, anything, anything)
           )
 

@@ -10,36 +10,29 @@ RSpec.shared_examples 'finds the right serializer' do |params|
   ].each do |input|
     it 'returns its own serializer class' do
       inferrer = SharkOnLambda::Inferrers::SerializerInferrer.new(input)
-      expect(inferrer.serializer_class).to eq(params[:expectation])
+      expect(inferrer.serializer_class).to eq(params[:expected])
     end
   end
 end
 
 RSpec.describe SharkOnLambda::Inferrers::SerializerInferrer do
-  class ClassWithSerializer; end
-  class ClassWithSerializerSerializer; end
-  class IntermediateClass < ClassWithSerializer; end
-  class IntermediateClassSerializer; end
-  class InheritedClass < IntermediateClass; end
-  class ClassWithoutSerializer; end
-
   describe '#serializer_class' do
     context 'with a class that has its own serializer class' do
       include_examples 'finds the right serializer',
-                       input: ClassWithSerializer,
-                       expectation: ClassWithSerializerSerializer
+                       input: TestApplication::ClassWithSerializer,
+                       expected: TestApplication::ClassWithSerializerSerializer
     end
 
     context 'with a class that has a serializer for one of its ancestors' do
       include_examples 'finds the right serializer',
-                       input: InheritedClass,
-                       expectation: IntermediateClassSerializer
+                       input: TestApplication::InheritedClass,
+                       expected: TestApplication::IntermediateClassSerializer
     end
 
     context 'with a class that has no serializer' do
       include_examples 'finds the right serializer',
-                       input: ClassWithoutSerializer,
-                       expectation: nil
+                       input: TestApplication::ClassWithoutSerializer,
+                       expected: nil
     end
   end
 end

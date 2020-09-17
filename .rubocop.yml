@@ -10,9 +10,6 @@ Metrics/BlockLength:
 Layout/LineLength:
   Max: 80
 
-Lint/ConstantDefinitionInBlock:
-  Enabled: false
-
 Naming/FileName:
   Exclude:
     - lib/shark-on-lambda.rb

@@ -5,21 +5,9 @@ RSpec.describe SharkOnLambda::Dispatcher do
     {
       'rack.input' => StringIO.new(''),
       'REQUEST_METHOD' => 'GET',
-      'shark.controller' => 'dispatcher_test_controller',
+      'shark.controller' => 'test_application/foo_controller',
       'shark.action' => 'index'
     }
-  end
-
-  before :all do
-    class DispatcherTestController < SharkOnLambda::BaseController
-      def index
-        render plain: 'Hello, world!'
-      end
-    end
-  end
-
-  after :all do
-    Object.send(:remove_const, :DispatcherTestController)
   end
 
   subject do

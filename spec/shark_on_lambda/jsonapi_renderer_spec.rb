@@ -7,13 +7,6 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
   end
 
-  class CustomObject
-    def id
-      SecureRandom.uuid
-    end
-  end
-  class CustomObjectSerializer < JSONAPI::Serializable::Resource; end
-
   let!(:renderer) { JSONAPI::Serializable::Renderer.new }
   let!(:params) { SharkOnLambda::JsonapiParameters.new.to_h }
 
@@ -27,7 +20,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with a serializable non-error object' do
-      let!(:object) { CustomObject.new }
+      let!(:object) { TestApplication::CustomObject.new }
 
       include_examples 'renders a hash'
 
@@ -38,7 +31,9 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
     end
 
     context 'with an array of serializable non-error objects' do
-      let!(:object) { [CustomObject.new, CustomObject.new] }
+      let!(:object) do
+        [TestApplication::CustomObject.new, TestApplication::CustomObject.new]
+      end
 
       include_examples 'renders a hash'
 
@@ -123,7 +118,7 @@ RSpec.describe SharkOnLambda::JsonapiRenderer do
         ]
       end
       let!(:object) do
-        errors = ActiveModel::Errors.new(CustomObject.new)
+        errors = ActiveModel::Errors.new(TestApplication::CustomObject.new)
         validation_errors.each do |validation_error|
           errors.add(validation_error[:attribute], validation_error[:message])
         end
