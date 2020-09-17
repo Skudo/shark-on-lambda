@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport', '~> 6.0.0'
   spec.add_dependency 'jsonapi-rb', '~> 0.5.0'
   spec.add_dependency 'rack', '>= 2.0.8', '< 3'
-  spec.add_dependency 'zeitwerk', '~> 2.2'
+  spec.add_dependency 'zeitwerk', '~> 2.3'
 
   # TODO: Do we really need `activemodel`?
   #       Or can we get away with mocking out ActiveModel::Errors?

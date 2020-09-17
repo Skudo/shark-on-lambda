@@ -6,7 +6,8 @@ SimpleCov.start
 require 'bundler/setup'
 require 'active_model'
 require 'factory_bot'
-require 'shark_on_lambda'
+
+require_relative 'test_application/application'
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
