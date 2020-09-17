@@ -1,10 +1,17 @@
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.5
 
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
     - 'spec/factories/*.rb'
+
+Layout/LineLength:
+  Max: 80
+
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
 
 Naming/FileName:
   Exclude:

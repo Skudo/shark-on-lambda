@@ -3,8 +3,8 @@
 module SharkOnLambda
   module RSpec
     class EnvBuilder
-      attr_reader :action, :controller, :headers, :method
-      attr_reader :params, :path_parameters
+      attr_reader :action, :controller, :headers,
+                  :method, :params, :path_parameters
 
       def initialize(options = {})
         @method = options.fetch(:method).to_s.upcase
