@@ -14,6 +14,7 @@ require 'active_support/all'
 require 'jsonapi/deserializable'
 require 'jsonapi/serializable'
 require 'rack/utils'
+require 'rack-on-lambda'
 require 'yaml'
 require 'zeitwerk'
 
