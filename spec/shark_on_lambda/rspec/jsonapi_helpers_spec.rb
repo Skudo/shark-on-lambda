@@ -6,7 +6,7 @@ RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
       include SharkOnLambda::RSpec::JsonapiHelpers
 
       def self.controller_name
-        'TestApplication::FooController'
+        'TestApplication::ApiGatewayController'
       end
 
       def controller_name
