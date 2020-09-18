@@ -35,10 +35,13 @@ module SharkOnLambda
           ancestor_name = ancestor.name
           next if ancestor_name.blank?
 
-          name_inferrer = NameInferrer.from_model_name(ancestor_name)
-          name_inferrer.serializer
+          serializer_name_from_model_name(ancestor_name)
         end
         @serializer_class_names.compact! || @serializer_class_names
+      end
+
+      def serializer_name_from_model_name(model_name)
+        "#{model_name.underscore}_serializer".camelize
       end
     end
   end
