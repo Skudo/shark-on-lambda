@@ -56,10 +56,7 @@ module SharkOnLambda
         @env = Rack::MockRequest.env_for(
           'https://localhost:9292',
           method: method,
-          params: params,
-          'shark.controller' => controller,
-          'shark.action' => action,
-          'shark.path_parameters' => path_parameters
+          params: params
         )
       end
 

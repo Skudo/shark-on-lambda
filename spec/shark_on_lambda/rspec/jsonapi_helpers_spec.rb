@@ -6,15 +6,11 @@ RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
       include SharkOnLambda::RSpec::JsonapiHelpers
 
       def self.controller_name
-        'jsonapi_foo_controller'
+        'TestApplication::FooController'
       end
 
-      def self.description
-        controller_name.camelcase
-      end
-
-      def self.name
-        controller_name.camelcase
+      def controller_name
+        self.class.controller_name
       end
     end
   end
@@ -61,7 +57,7 @@ RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
   let!(:response) { [response_status, response_headers, [response_body]] }
 
   before do
-    allow(SharkOnLambda.config.dispatcher).to(
+    allow(SharkOnLambda.application.routes).to(
       receive(:call).and_return(response)
     )
   end

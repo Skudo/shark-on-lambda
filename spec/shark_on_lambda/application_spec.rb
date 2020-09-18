@@ -6,14 +6,18 @@ RSpec.describe SharkOnLambda::Application do
     end
   end
   let!(:dispatcher_response) { [200, {}, body] }
-  let!(:env) { {} }
+  let!(:env) do
+    {
+      'REQUEST_METHOD' => 'GET'
+    }
+  end
 
   subject do
-    SharkOnLambda::Application.new
+    SharkOnLambda.application
   end
 
   before do
-    allow(SharkOnLambda.config.dispatcher).to(
+    allow(SharkOnLambda.application.routes).to(
       receive(:call).and_return(dispatcher_response)
     )
   end
@@ -21,7 +25,7 @@ RSpec.describe SharkOnLambda::Application do
   describe '#call' do
     context 'without using any middleware' do
       it 'eventually calls the dispatcher' do
-        expect(SharkOnLambda.config.dispatcher).to(receive(:call))
+        expect(SharkOnLambda.application.routes).to(receive(:call))
 
         subject.call(env)
       end
@@ -59,7 +63,7 @@ RSpec.describe SharkOnLambda::Application do
       end
 
       it 'eventually calls the dispatcher' do
-        expect(SharkOnLambda.config.dispatcher).to(receive(:call))
+        expect(SharkOnLambda.application.routes).to(receive(:call))
 
         subject.call(env)
       end

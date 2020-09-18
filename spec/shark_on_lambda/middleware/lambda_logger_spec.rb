@@ -24,8 +24,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     {
       'REQUEST_METHOD' => method,
       'PATH_INFO' => path,
-      'QUERY_STRING' => Rack::Utils.build_nested_query(params),
-      'shark.path_parameters' => path_parameters
+      'QUERY_STRING' => Rack::Utils.build_nested_query(params)
     }
   end
 
@@ -76,9 +75,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       end
 
       it 'logs the request params' do
-        expected_params = params.merge(path_parameters).to_json
-
-        expect(logged_data).to include(%("params":#{expected_params}))
+        expect(logged_data).to include(%("params":#{params.to_json}))
       end
 
       it 'logs the response status code' do

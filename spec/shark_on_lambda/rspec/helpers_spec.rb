@@ -6,15 +6,11 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
       include SharkOnLambda::RSpec::Helpers
 
       def self.controller_name
-        'test_application/foo_controller'
+        'TestApplication::FooController'
       end
 
-      def self.description
-        controller_name.camelcase
-      end
-
-      def self.name
-        controller_name.camelcase
+      def controller_name
+        self.class.controller_name
       end
     end
   end
@@ -52,7 +48,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
   let!(:response) { [response_status, response_headers, [response_body]] }
 
   before do
-    allow(SharkOnLambda.config.dispatcher).to(
+    allow(SharkOnLambda.application.routes).to(
       receive(:call).and_return(response)
     )
   end
@@ -127,46 +123,9 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
         end
 
         it 'dispatches the right "env" object' do
-          expect(SharkOnLambda.config.dispatcher).to(
+          expect(SharkOnLambda.application).to(
             receive(:call).with(hash_including(env_without_streams))
-          )
-          subject
-        end
-      end
-
-      context 'with the "skip_middleware" parameter' do
-        subject do
-          instance.send(
-            http_verb,
-            action,
-            headers: request_headers,
-            params: request_params,
-            path_parameters: request_path_parameters,
-            skip_middleware: true
-          )
-        end
-
-        before do
-          allow_any_instance_of(SharkOnLambda::Response).to(
-            receive(:prepare!).and_return(response)
-          )
-        end
-
-        it 'does not call the middleware stack' do
-          expect(SharkOnLambda.application).to_not receive(:call)
-          subject
-        end
-
-        it 'dispatches the right "env" object straight to the controller' do
-          expect(SharkOnLambda::Request).to(
-            receive(:new)
-              .with(hash_including(env_without_streams))
-              .and_call_original
-          )
-          expect(TestApplication::FooController).to(
-            receive(:dispatch).with(action, anything, anything)
-          )
-
+          ).and_call_original
           subject
         end
       end

@@ -50,25 +50,11 @@ module SharkOnLambda
       end
 
       def controller_name
-        self.class.ancestors.find do |klass|
-          klass.name.end_with?('Controller')
-        end&.description
+        described_class.name
       end
 
       def default_content_type
         'application/json'
-      end
-
-      def dispatch_request(env, skip_middleware: false)
-        return SharkOnLambda.application.call(env) unless skip_middleware
-
-        controller_class = env['shark.controller'].constantize
-        action = env['shark.action']
-
-        request = Request.new(env)
-        response = Response.new
-        controller_class.dispatch(action, request, response)
-        response.prepare!
       end
 
       def headers_with_content_type(headers)
@@ -86,12 +72,21 @@ module SharkOnLambda
 
         env = build_env(method, action, options)
 
-        status, headers, body = dispatch_request(
-          env,
-          skip_middleware: options[:skip_middleware]
-        )
+        status, headers, body = SharkOnLambda.application.call(env)
         errors = env['rack.errors']
         @response = Rack::MockResponse.new(status, headers, body, errors)
+      end
+
+      def path_for(action:, params:)
+        path_params = params.symbolize_keys.merge(
+          controller: controller_name.sub(/Controller$/, '').underscore,
+          action: action,
+          only_path: true
+        )
+
+        routes = SharkOnLambda.application.routes
+        uri = URI.parse(routes.url_for(path_params, nil))
+        uri.path
       end
     end
   end

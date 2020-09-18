@@ -59,6 +59,8 @@ module SharkOnLambda
 
       Configuration.load(stage)
       Secrets.load(stage)
+
+      load_routes
       run_initializers
 
       true
@@ -98,6 +100,11 @@ module SharkOnLambda
       ::Mime::Type.register('application/vnd.api+json', :jsonapi)
       ::ActionDispatch::Request.parameter_parsers[:jsonapi] =
         ::ActionDispatch::Request.parameter_parsers[:json].dup
+    end
+
+    def load_routes
+      routes_path = root.join('config', 'routes.rb').to_s
+      load routes_path if File.exist?(routes_path)
     end
 
     def run_initializers

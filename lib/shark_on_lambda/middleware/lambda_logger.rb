@@ -51,8 +51,7 @@ module SharkOnLambda
       end
 
       def params(env)
-        query_params = Rack::Utils.parse_nested_query(env['QUERY_STRING'])
-        query_params.merge(env['shark.path_parameters'] || {})
+        Rack::Utils.parse_nested_query(env['QUERY_STRING'])
       end
     end
   end
