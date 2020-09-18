@@ -6,13 +6,6 @@ module SharkOnLambda
       AbstractController::Translation,
       AbstractController::AssetPaths,
 
-      ActionController::UrlFor,
-      ActionController::ConditionalGet,
-      ActionController::EtagWithTemplateDigest,
-      ActionController::EtagWithFlash,
-      ActionController::Caching,
-      ActionController::MimeResponds,
-      ActionController::ImplicitRender,
       ActionController::Cookies,
       ActionController::Flash,
       ActionController::FormBuilder,
@@ -24,7 +17,7 @@ module SharkOnLambda
       ActionController::HttpAuthentication::Token::ControllerMethods,
       ActionView::Layouts
     ].freeze
-    ActionController::Base.without_modules(EXCLUDED_MODULES).each do |mod|
+    ActionController::API.without_modules(EXCLUDED_MODULES).each do |mod|
       include mod
     end
 

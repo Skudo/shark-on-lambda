@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :api_gateway_context, class: OpenStruct do
+  factory :api_gateway_context, class: Hash do
+    initialize_with { attributes.deep_stringify_keys }
   end
 
-  factory :api_gateway_event, class: OpenStruct do
+  factory :api_gateway_event, class: Hash do
     path { '/api/v1/mailing/1234' }
-    resource { '/api/v1/mailing/{id}' }
+    resource { '/__proxy+}' }
     httpMethod { 'POST' }
     headers do
       {
         'Accept-Encoding' => 'gzip, br, deflate',
         'Authorization' => 'Bearer foobarblubb',
-        'Content-Length' => body.bytesize,
+        'Content-Length' => body.to_s.bytesize,
         'Content-Type' => 'text/plain'
       }
     end
@@ -67,7 +68,9 @@ FactoryBot.define do
         apiId: nil
       }
     end
-    body { 'Hello, world!' }
+    body { nil }
     isBase64Encoded { false }
+
+    initialize_with { attributes.deep_stringify_keys }
   end
 end
