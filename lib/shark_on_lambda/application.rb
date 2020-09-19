@@ -54,15 +54,16 @@ module SharkOnLambda
     end
 
     def load_config_file(name, env:)
-      config_file = SharkOnLambda.root.join('config', "#{name}.yml")
+      filename = "#{name}.yml"
+      config_file = SharkOnLambda.root.join('config', filename)
       unless config_file.exist?
         raise ArgumentError,
               "Could not load configuration. No such file - #{config_file}"
       end
 
       erb_parsed_config = ERB.new(config_file.read).result
-      config = YAML.safe_load(erb_parsed_config) || {}
-      (config[env] || {}).with_indifferent_access
+      config = YAML.safe_load(erb_parsed_config, [], [], true, filename) || {}
+      config.fetch(env, {}).with_indifferent_access
     end
 
     def load_routes
