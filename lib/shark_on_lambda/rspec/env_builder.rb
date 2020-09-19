@@ -52,10 +52,28 @@ module SharkOnLambda
 
       def initialize_env
         @env = Rack::MockRequest.env_for(
-          'https://localhost:9292',
+          request_uri.to_s,
           method: method,
           params: params
         )
+      end
+
+      def request_path
+        return action if action.is_a?(String)
+
+        path_params = params.symbolize_keys.merge(
+          controller: controller.sub(/Controller$/, '').underscore,
+          action: action,
+          only_path: true
+        )
+        path = SharkOnLambda.application.routes.url_for(path_params, nil)
+        URI.parse(path).path
+      end
+
+      def request_uri
+        URI.join('https://localhost:9292', request_path).tap do |uri|
+          uri.query = nil
+        end
       end
 
       def set_content_type_and_content_length

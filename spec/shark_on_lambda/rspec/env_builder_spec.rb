@@ -2,8 +2,8 @@
 
 RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
   let!(:method) { 'GET' }
-  let!(:controller) { 'best_controller' }
-  let!(:action) { 'some_action' }
+  let!(:controller) { 'TestApplication::ApiGatewayController' }
+  let!(:action) { :index }
   let!(:headers) do
     {
       'content-type' => 'application/json'
@@ -28,6 +28,32 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
         let!(:method) { http_verb }
 
         it { expect(env['REQUEST_METHOD']).to eq(http_verb.to_s.upcase) }
+      end
+    end
+
+    context 'with a symbol as the action' do
+      context 'if the action exists' do
+        let(:action) { :index }
+
+        it 'determines the request path from the routes' do
+          expect(env['PATH_INFO']).to eq('/api_gateway')
+        end
+      end
+
+      context 'if the action does not exist' do
+        let(:action) { :does_not_exist }
+
+        it 'raises an exception' do
+          expect { env }.to raise_error(ActionController::UrlGenerationError)
+        end
+      end
+    end
+
+    context 'with a string as the action' do
+      let(:action) { '/foo/bar/1' }
+
+      it 'takes the action as the request path' do
+        expect(env['PATH_INFO']).to eq('/foo/bar/1')
       end
     end
 
