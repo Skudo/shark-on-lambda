@@ -7,7 +7,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       'content-type' => 'application/json'
     }
   end
-  let(:path) { '/api_gateway' }
+  let(:path) { '/api_gateway?blah=blubb' }
   let(:params) do
     {
       'foo' => 'bar',
@@ -61,7 +61,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       let(:log_level) { :info }
 
       it 'logs the request path' do
-        expect(logged_data).to include(%("url":"#{path}"))
+        expect(logged_data).to include(%("url":"/api_gateway"))
       end
 
       it 'logs the request method' do
@@ -69,7 +69,9 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       end
 
       it 'logs the request params' do
-        expected_params = params.merge(
+        expected_params = params.deep_dup
+        expected_params[:blah] = 'blubb'
+        expected_params.merge!(
           controller: 'test_application/api_gateway',
           action: 'some_action'
         )

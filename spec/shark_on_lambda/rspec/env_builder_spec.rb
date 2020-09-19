@@ -9,7 +9,7 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
       'content-type' => 'application/json'
     }
   end
-  let(:params) { nil }
+  let(:params) { {} }
   let(:builder_params) do
     {
       method: method,
@@ -50,10 +50,28 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
     end
 
     context 'with a string as the action' do
-      let(:action) { '/foo/bar/1' }
+      context 'with a query string' do
+        let(:action) { '/foo/bar/1?foo=bar&baz=blubb' }
 
-      it 'takes the action as the request path' do
-        expect(env['PATH_INFO']).to eq('/foo/bar/1')
+        it 'takes the action as the request path' do
+          expect(env['PATH_INFO']).to eq('/foo/bar/1')
+        end
+
+        it 'sets the query string' do
+          expect(env['QUERY_STRING']).to eq('foo=bar&baz=blubb')
+        end
+      end
+
+      context 'without a query string' do
+        let(:action) { '/foo/bar/1' }
+
+        it 'takes the action as the request path' do
+          expect(env['PATH_INFO']).to eq('/foo/bar/1')
+        end
+
+        it 'does not set the query string' do
+          expect(env['QUERY_STRING']).to be_empty
+        end
       end
     end
 
@@ -77,6 +95,7 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
     end
 
     context 'with parameters' do
+      let(:action) { '/foo?bar[]=baz&bar[]=narf&blah=blubb' }
       let(:params) do
         {
           best_programming_language: 'ruby',
@@ -95,7 +114,10 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
       context 'for a GET request' do
         it 'builds the right query string' do
           expect(env['QUERY_STRING'].split('&')).to(
-            match_array(%w[best_programming_language=ruby
+            match_array(%w[bar[]=baz
+                           bar[]=narf
+                           best_programming_language=ruby
+                           blah=blubb
                            days[favourite]=Friday
                            days[free][]=Saturday
                            days[free][]=Sunday
@@ -110,6 +132,10 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
       %i[delete patch post put].each do |http_verb|
         context "for a #{http_verb.to_s.upcase} request" do
           let(:method) { http_verb }
+
+          it 'contains the path parameters in the query string' do
+            expect(env['QUERY_STRING']).to eq('bar[]=baz&bar[]=narf&blah=blubb')
+          end
 
           it 'contains the params in the request body' do
             body = env['rack.input'].read

@@ -3,16 +3,17 @@
 module SharkOnLambda
   module RSpec
     class EnvBuilder
-      attr_reader :action, :controller, :headers, :method, :params
+      attr_reader :headers, :method, :params
 
       def initialize(options = {})
         @method = options.fetch(:method).to_s.upcase
-        @controller = options.fetch(:controller, nil)
-        @action = options.fetch(:action)
-
-        @headers = (options[:headers] || {}).deep_stringify_keys
+        @headers = options.fetch(:headers, {}).deep_stringify_keys
         @headers.transform_keys!(&:downcase)
-        @params = options[:params] || {}
+        @params = options.fetch(:params, {}).deep_stringify_keys
+
+        controller = options.fetch(:controller, nil)
+        action = options.fetch(:action)
+        @request_uri = build_request_uri(controller, action)
 
         initialize_env
         add_headers
@@ -25,7 +26,7 @@ module SharkOnLambda
 
       private
 
-      attr_reader :env
+      attr_reader :env, :request_uri
 
       def add_header(name, value)
         name = name.upcase.tr('-', '_')
@@ -50,6 +51,15 @@ module SharkOnLambda
         set_content_type_and_content_length
       end
 
+      def build_request_uri(controller, action)
+        path_with_query = if action.is_a?(String)
+                            action
+                          else
+                            path_with_query_from_routes(controller, action)
+                          end
+        URI.join('https://localhost:9292', path_with_query)
+      end
+
       def initialize_env
         @env = Rack::MockRequest.env_for(
           request_uri.to_s,
@@ -58,22 +68,13 @@ module SharkOnLambda
         )
       end
 
-      def request_path
-        return action if action.is_a?(String)
-
+      def path_with_query_from_routes(controller, action)
         path_params = params.symbolize_keys.merge(
           controller: controller.sub(/Controller$/, '').underscore,
           action: action,
           only_path: true
         )
-        path = SharkOnLambda.application.routes.url_for(path_params, nil)
-        URI.parse(path).path
-      end
-
-      def request_uri
-        URI.join('https://localhost:9292', request_path).tap do |uri|
-          uri.query = nil
-        end
+        SharkOnLambda.application.routes.url_for(path_params, nil)
       end
 
       def set_content_type_and_content_length
