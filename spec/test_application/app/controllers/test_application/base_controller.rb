@@ -5,22 +5,26 @@ module TestApplication
     before_action :before_action_method
     after_action :after_action_method
 
-    rescue_from HandledException do
-      render plain: 'I was taken care of.', status: 400
+    rescue_from HandledException do |e|
+      render SharkOnLambda::Errors[400].new(e.message), status: 400
     end
 
     def invalid_redirect
       redirect_to nil
     end
 
+    def render_nil
+      render nil
+    end
+
     def redirect_once
       redirect_to 'https://example.com'
     end
 
-    def redirect_then_render
-      redirect_to 'https://example.com'
-      render plain: 'Hello, world!'
-    end
+    # def redirect_then_render
+    #   redirect_to 'https://example.com'
+    #   render plain: 'Hello, world!'
+    # end
 
     def redirect_twice
       redirect_to 'https://example.com'
@@ -31,14 +35,18 @@ module TestApplication
       redirect_to 'https://example.com', status: 304
     end
 
-    def render_then_redirect
-      render plain: 'Hello, world!'
-      redirect_to 'https://example.com'
-    end
+    # def render_then_redirect
+    #   render plain: 'Hello, world!'
+    #   redirect_to 'https://example.com'
+    # end
+    #
+    # def render_twice
+    #   render plain: 'First render'
+    #   render plain: 'Second render'
+    # end
 
-    def render_twice
-      render plain: 'First render'
-      render plain: 'Second render'
+    def render_unserializable
+      render Object.new
     end
 
     def explode_with_handled_exception

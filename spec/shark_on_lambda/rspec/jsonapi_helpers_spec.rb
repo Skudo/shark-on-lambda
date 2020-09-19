@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
+RSpec.describe SharkOnLambda::RSpec::Helpers do
   let!(:class_with_mixin) do
     Class.new do
-      include SharkOnLambda::RSpec::JsonapiHelpers
+      include SharkOnLambda::RSpec::Helpers
 
       def self.controller_name
         'TestApplication::ApiGatewayController'
       end
 
-      def controller_name
-        self.class.controller_name
+      def described_class
+        self.class.controller_name.constantize
       end
     end
   end
