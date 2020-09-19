@@ -2,7 +2,12 @@
 
 RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
   let(:method) { 'POST' }
-  let(:path) { '/hello/world' }
+  let(:headers) do
+    {
+      'content-type' => 'application/json'
+    }
+  end
+  let(:path) { '/api_gateway' }
   let(:params) do
     {
       'foo' => 'bar',
@@ -15,18 +20,14 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     }
   end
   let(:env) do
-    {
-      'REQUEST_METHOD' => method,
-      'PATH_INFO' => path,
-      'QUERY_STRING' => Rack::Utils.build_nested_query(params)
-    }
+    env_builder = SharkOnLambda::RSpec::EnvBuilder.new(
+      method: method,
+      headers: headers,
+      action: path,
+      params: params
+    )
+    env_builder.build
   end
-
-  let(:status) { 200 }
-  let(:headers) { {} }
-  let(:body) { 'Hello, world!' }
-  let(:response) { [status, headers, [body]] }
-  let(:app) { ->(_env) { response } }
 
   let(:log_stream) { StringIO.new }
   let(:log_level) { :info }
@@ -34,19 +35,18 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     Logger.new(log_stream).tap { |logger| logger.level = log_level }
   end
   let(:instance) do
-    SharkOnLambda::Middleware::LambdaLogger.new(app, logger: logger)
+    SharkOnLambda::Middleware::LambdaLogger.new(
+      SharkOnLambda.application,
+      logger: logger
+    )
   end
 
   describe '#call' do
-    let(:logged_data) do
+    subject(:logged_data) do
       instance.call(env)
 
       log_stream.rewind
       log_stream.read
-    end
-
-    it 'returns the response without modifying it' do
-      expect(instance.call(env)).to eq(response)
     end
 
     context 'with a log level too high' do
@@ -69,15 +69,19 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       end
 
       it 'logs the request params' do
-        expect(logged_data).to include(%("params":#{params.to_json}))
+        expected_params = params.merge(
+          controller: 'test_application/api_gateway',
+          action: 'some_action'
+        )
+        expect(logged_data).to include(%("params":#{expected_params.to_json}))
       end
 
       it 'logs the response status code' do
-        expect(logged_data).to include(%("status":#{status}))
+        expect(logged_data).to include(%("status":204))
       end
 
       it 'logs the response body length' do
-        expect(logged_data).to include(%("length":#{body.bytesize}))
+        expect(logged_data).to include(%("length":0))
       end
 
       it 'logs the duration' do

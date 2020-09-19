@@ -5,5 +5,7 @@ module TestApplication
     def index
       render plain: 'Hello, world!'
     end
+
+    def some_action; end
   end
 end

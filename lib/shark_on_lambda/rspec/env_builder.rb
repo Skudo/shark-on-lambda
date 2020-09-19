@@ -7,7 +7,7 @@ module SharkOnLambda
 
       def initialize(options = {})
         @method = options.fetch(:method).to_s.upcase
-        @controller = options.fetch(:controller)
+        @controller = options.fetch(:controller, nil)
         @action = options.fetch(:action)
 
         @headers = (options[:headers] || {}).deep_stringify_keys
