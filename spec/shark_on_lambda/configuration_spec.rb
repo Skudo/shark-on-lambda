@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Configuration do
-  subject { SharkOnLambda::Configuration }
+  let(:instance) { described_class.instance }
 
-  it 'is a singleton' do
-    expect(subject.ancestors).to include(Singleton)
-    expect(subject.instance).to be_a(SharkOnLambda::Configuration)
+  describe '#root=' do
+    let(:path) { '/foo/bar' }
+
+    before { instance.root = path }
+
+    it 'stores the root path as a Pathname object' do
+      expect(instance.root).to be_a(Pathname)
+      expect(instance.root.to_s).to eq(path)
+    end
   end
 end

@@ -12,9 +12,7 @@ RSpec.describe SharkOnLambda::Application do
     }
   end
 
-  subject do
-    SharkOnLambda.application
-  end
+  let(:application) { SharkOnLambda.application }
 
   before do
     allow(SharkOnLambda.application.routes).to(
@@ -23,15 +21,17 @@ RSpec.describe SharkOnLambda::Application do
   end
 
   describe '#call' do
+    subject { application.call(env) }
+
     context 'without using any middleware' do
       it 'eventually calls the dispatcher' do
         expect(SharkOnLambda.application.routes).to(receive(:call))
 
-        subject.call(env)
+        subject
       end
 
       it 'returns a Rack-compatible response' do
-        status, headers, body = subject.call(env)
+        status, headers, body = subject
 
         expect(status).to be_present
         expect(headers).to be_a(Hash)
@@ -39,7 +39,7 @@ RSpec.describe SharkOnLambda::Application do
       end
 
       it 'returns a closable body' do
-        _, _, body_proxy = subject.call(env)
+        _, _, body_proxy = subject
 
         expect { body_proxy.close }.to_not raise_error
       end
@@ -49,7 +49,7 @@ RSpec.describe SharkOnLambda::Application do
       before do
         # Doing the obvious
         #
-        #     SharkOnLambda.config.middleware.use(
+        #     SharkOnLambda.application.middleware.use(
         #       SharkOnLambda::Middleware::Rescuer
         #     )
         #
@@ -59,17 +59,19 @@ RSpec.describe SharkOnLambda::Application do
         #
         stack = ActionDispatch::MiddlewareStack.new
         stack.use(SharkOnLambda::Middleware::Rescuer)
-        allow(SharkOnLambda.config).to receive(:middleware).and_return(stack)
+        allow(SharkOnLambda.application).to(
+          receive(:middleware).and_return(stack)
+        )
       end
 
       it 'eventually calls the dispatcher' do
         expect(SharkOnLambda.application.routes).to(receive(:call))
 
-        subject.call(env)
+        subject
       end
 
       it 'returns a Rack-compatible response' do
-        status, headers, body = subject.call(env)
+        status, headers, body = subject
 
         expect(status).to be_present
         expect(headers).to be_a(Hash)
@@ -77,9 +79,36 @@ RSpec.describe SharkOnLambda::Application do
       end
 
       it 'returns a closable body' do
-        _, _, body_proxy = subject.call(env)
+        _, _, body_proxy = subject
 
         expect { body_proxy.close }.to_not raise_error
+      end
+    end
+  end
+
+  describe '#config_for' do
+    context 'with existing configuration files' do
+      subject { application.config_for(:settings) }
+
+      it 'loads the right configuration' do
+        expected_configuration = {
+          credentials: {
+            password: 'secret-password',
+            username: 'test'
+          },
+          host: 'localhost',
+          port: 8080
+        }.with_indifferent_access
+
+        expect(subject).to eq(expected_configuration)
+      end
+    end
+
+    context 'without existing configuration files' do
+      subject { application.config_for(:does_not_exist) }
+
+      it 'raises an exception' do
+        expect { subject }.to raise_error(ArgumentError)
       end
     end
   end

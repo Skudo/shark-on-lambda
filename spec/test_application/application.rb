@@ -3,8 +3,7 @@
 require 'shark-on-lambda'
 require 'zeitwerk'
 
-root_directory = File.expand_path(__dir__)
-app_directory = File.join(root_directory, 'app')
+app_directory = File.expand_path('app', __dir__)
 
 loader = Zeitwerk::Loader.new
 loader.push_dir(app_directory)
@@ -15,6 +14,9 @@ paths_to_skip.each do |path_to_skip|
 end
 loader.setup
 
-SharkOnLambda.initialize! do |config, _secrets|
-  config.root = root_directory
+module TestApplication
+  class Application < SharkOnLambda::Application
+    config.root = File.expand_path(__dir__)
+  end
 end
+SharkOnLambda.application.initialize!

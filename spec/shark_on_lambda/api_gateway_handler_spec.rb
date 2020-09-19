@@ -10,7 +10,7 @@ RSpec.describe TestApplication::ApiGatewayHandler do
 
   describe '.call' do
     subject(:response) do
-      described_class.call(event: event, context: context, app: app)
+      described_class.call(event: event, context: context)
     end
 
     it 'calls the application' do
