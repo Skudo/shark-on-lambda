@@ -2,9 +2,7 @@
 
 module SharkOnLambda
   module RSpec
-    module JsonapiHelpers
-      include Helpers
-
+    module ResponseHelpers
       def jsonapi_attributes
         jsonapi_data[:attributes] || {}
       end
@@ -18,10 +16,6 @@ module SharkOnLambda
       end
 
       private
-
-      def default_content_type
-        'application/vnd.api+json'
-      end
 
       def parsed_body
         @parsed_body ||= JSON.parse(response.body).with_indifferent_access

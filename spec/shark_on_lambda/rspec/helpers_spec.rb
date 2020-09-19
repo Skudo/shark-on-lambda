@@ -9,8 +9,8 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
         'TestApplication::ApiGatewayController'
       end
 
-      def controller_name
-        self.class.controller_name
+      def described_class
+        self.class.controller_name.constantize
       end
     end
   end
@@ -26,14 +26,10 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
   end
   let!(:request_params) do
     {
+      id: 1,
+      type: 'things',
       foo: 'bar',
       baz: 'blubb'
-    }
-  end
-  let!(:request_path_parameters) do
-    {
-      id: 1,
-      type: 'things'
     }
   end
 
@@ -63,8 +59,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
           controller: controller_name,
           action: action,
           headers: request_headers,
-          params: request_params,
-          path_parameters: request_path_parameters
+          params: request_params
         )
         builder.build.reject { |key, _| key.in?(%w[rack.errors rack.input]) }
       end
@@ -74,8 +69,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
           http_verb,
           action,
           headers: request_headers,
-          params: request_params,
-          path_parameters: request_path_parameters
+          params: request_params
         )
       end
 
@@ -88,7 +82,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
 
         it 'sets a default "content-type" header' do
           expected_env = env_without_streams
-          expected_env['CONTENT_TYPE'] = 'application/json'
+          expected_env['CONTENT_TYPE'] = 'application/vnd.api+json'
 
           expect(SharkOnLambda.application).to(
             receive(:call)
