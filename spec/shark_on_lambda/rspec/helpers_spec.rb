@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::RSpec::Helpers do
-  let!(:class_with_mixin) do
+  let(:class_with_mixin) do
     Class.new do
       include SharkOnLambda::RSpec::Helpers
 
@@ -15,16 +15,16 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
     end
   end
 
-  let!(:action) { 'some_action' }
-  let!(:controller_name) { class_with_mixin.controller_name.camelcase }
+  let(:action) { 'some_action' }
+  let(:controller_name) { class_with_mixin.controller_name.camelcase }
 
-  let!(:request_headers) do
+  let(:request_headers) do
     {
       'Accept-Encoding': 'br, gzip, deflate',
       'Content-Type': 'text/plain'
     }
   end
-  let!(:request_params) do
+  let(:request_params) do
     {
       id: 1,
       type: 'things',
@@ -33,15 +33,15 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
     }
   end
 
-  let!(:response_status) { 200 }
-  let!(:response_body) { 'Hello, world!' }
-  let!(:response_headers) do
+  let(:response_status) { 200 }
+  let(:response_body) { 'Hello, world!' }
+  let(:response_headers) do
     {
       'Content-Length' => response_body.bytesize,
       'Content-Type' => 'text/plain'
     }
   end
-  let!(:response) { [response_status, response_headers, [response_body]] }
+  let(:response) { [response_status, response_headers, [response_body]] }
 
   before do
     allow(SharkOnLambda.application.routes).to(
@@ -49,11 +49,11 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
     )
   end
 
-  let!(:instance) { class_with_mixin.new }
+  let(:instance) { class_with_mixin.new }
 
   %w[delete get patch post put].each do |http_verb|
     describe "##{http_verb.upcase}" do
-      let!(:env_without_streams) do
+      let(:env_without_streams) do
         builder = SharkOnLambda::RSpec::EnvBuilder.new(
           method: http_verb.upcase,
           controller: controller_name,
@@ -74,7 +74,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
       end
 
       context 'without a "content-type" header' do
-        let!(:request_headers) do
+        let(:request_headers) do
           {
             'Accept-Encoding': 'br, gzip, deflate'
           }

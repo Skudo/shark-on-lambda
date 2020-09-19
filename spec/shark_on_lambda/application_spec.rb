@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Application do
-  let!(:body) do
+  let(:body) do
     Rack::BodyProxy.new(['Hello, world!']) do
     end
   end
-  let!(:dispatcher_response) { [200, {}, body] }
-  let!(:env) do
+  let(:dispatcher_response) { [200, {}, body] }
+  let(:env) do
     {
       'REQUEST_METHOD' => 'GET'
     }

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
-  let!(:method) { 'POST' }
-  let!(:path) { '/hello/world' }
-  let!(:params) do
+  let(:method) { 'POST' }
+  let(:path) { '/hello/world' }
+  let(:params) do
     {
       'foo' => 'bar',
       'nested' => %w[value1 value2],
@@ -14,13 +14,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       }
     }
   end
-  let!(:path_parameters) do
-    {
-      'id' => 3,
-      'parent_id' => 1
-    }
-  end
-  let!(:env) do
+  let(:env) do
     {
       'REQUEST_METHOD' => method,
       'PATH_INFO' => path,
@@ -28,23 +22,23 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     }
   end
 
-  let!(:status) { 200 }
-  let!(:headers) { {} }
-  let!(:body) { 'Hello, world!' }
-  let!(:response) { [status, headers, [body]] }
-  let!(:app) { ->(_env) { response } }
+  let(:status) { 200 }
+  let(:headers) { {} }
+  let(:body) { 'Hello, world!' }
+  let(:response) { [status, headers, [body]] }
+  let(:app) { ->(_env) { response } }
 
-  let!(:log_stream) { StringIO.new }
-  let!(:log_level) { :info }
-  let!(:logger) do
+  let(:log_stream) { StringIO.new }
+  let(:log_level) { :info }
+  let(:logger) do
     Logger.new(log_stream).tap { |logger| logger.level = log_level }
   end
-  let!(:instance) do
+  let(:instance) do
     SharkOnLambda::Middleware::LambdaLogger.new(app, logger: logger)
   end
 
   describe '#call' do
-    let!(:logged_data) do
+    let(:logged_data) do
       instance.call(env)
 
       log_stream.rewind
@@ -56,7 +50,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     end
 
     context 'with a log level too high' do
-      let!(:log_level) { :warn }
+      let(:log_level) { :warn }
 
       it 'does not log anything' do
         expect(logged_data).to be_empty
@@ -64,7 +58,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     end
 
     context 'with a log level low enough' do
-      let!(:log_level) { :info }
+      let(:log_level) { :info }
 
       it 'logs the request path' do
         expect(logged_data).to include(%("url":"#{path}"))

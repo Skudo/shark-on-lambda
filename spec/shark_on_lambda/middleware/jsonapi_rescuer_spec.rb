@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Middleware::JsonapiRescuer do
-  let!(:env) { {} }
+  let(:env) { {} }
 
   subject do
     instance = SharkOnLambda::Middleware::JsonapiRescuer.new(app)
@@ -9,8 +9,8 @@ RSpec.describe SharkOnLambda::Middleware::JsonapiRescuer do
   end
 
   context 'with no exceptions' do
-    let!(:app_response) { [200, {}, 'Hello, world!'] }
-    let!(:app) { ->(_env) { app_response } }
+    let(:app_response) { [200, {}, 'Hello, world!'] }
+    let(:app) { ->(_env) { app_response } }
 
     it 'does not do anything with the response' do
       expect(subject).to eq(app_response)
@@ -18,9 +18,9 @@ RSpec.describe SharkOnLambda::Middleware::JsonapiRescuer do
   end
 
   context 'with a SharkOnLambda::Errors exception' do
-    let!(:message) { 'Go away!' }
-    let!(:exception) { SharkOnLambda::Errors[403].new(message) }
-    let!(:app) { ->(_env) { raise exception } }
+    let(:message) { 'Go away!' }
+    let(:exception) { SharkOnLambda::Errors[403].new(message) }
+    let(:app) { ->(_env) { raise exception } }
 
     it 'returns the right response status' do
       status, = subject
@@ -52,9 +52,9 @@ RSpec.describe SharkOnLambda::Middleware::JsonapiRescuer do
   end
 
   context 'with a StandardError exception' do
-    let!(:message) { 'I have no idea what happened...' }
-    let!(:exception) { StandardError.new(message) }
-    let!(:app) { ->(_env) { raise exception } }
+    let(:message) { 'I have no idea what happened...' }
+    let(:exception) { StandardError.new(message) }
+    let(:app) { ->(_env) { raise exception } }
 
     before do
       allow(SharkOnLambda.logger).to receive(:error)

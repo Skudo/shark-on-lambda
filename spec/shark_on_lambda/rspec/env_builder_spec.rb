@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
-  let!(:method) { 'GET' }
-  let!(:controller) { 'TestApplication::ApiGatewayController' }
-  let!(:action) { :index }
-  let!(:headers) do
+  let(:method) { 'GET' }
+  let(:controller) { 'TestApplication::ApiGatewayController' }
+  let(:action) { :index }
+  let(:headers) do
     {
       'content-type' => 'application/json'
     }
   end
-  let!(:params) { nil }
-  let!(:builder_params) do
+  let(:params) { nil }
+  let(:builder_params) do
     {
       method: method,
       controller: controller,
@@ -25,7 +25,7 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
 
     %i[delete get patch post put].each do |http_verb|
       context "for a #{http_verb.to_s.upcase} request" do
-        let!(:method) { http_verb }
+        let(:method) { http_verb }
 
         it { expect(env['REQUEST_METHOD']).to eq(http_verb.to_s.upcase) }
       end
@@ -58,7 +58,7 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
     end
 
     context 'with request headers' do
-      let!(:headers) do
+      let(:headers) do
         {
           'content-length': 1234,
           'content-type': 'text/plain',
@@ -77,7 +77,7 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
     end
 
     context 'with parameters' do
-      let!(:params) do
+      let(:params) do
         {
           best_programming_language: 'ruby',
           days: {
@@ -109,7 +109,7 @@ RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
 
       %i[delete patch post put].each do |http_verb|
         context "for a #{http_verb.to_s.upcase} request" do
-          let!(:method) { http_verb }
+          let(:method) { http_verb }
 
           it 'contains the params in the request body' do
             body = env['rack.input'].read
