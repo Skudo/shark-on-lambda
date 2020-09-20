@@ -34,7 +34,7 @@ module SharkOnLambda
         log_object = {
           url: env['PATH_INFO'],
           method: env['REQUEST_METHOD'],
-          params: env['action_dispatch.request.parameters'] || {},
+          params: env.fetch('action_dispatch.request.parameters', {}),
           status: response[0],
           length: body_size(response[2]),
           duration: "#{duration} ms"

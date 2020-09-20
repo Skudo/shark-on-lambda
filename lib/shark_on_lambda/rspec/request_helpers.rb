@@ -35,14 +35,14 @@ module SharkOnLambda
 
       def build_env(method, action, options = {})
         path_parameters = options.delete(:path_parameters) || {}
-        options[:params] = (options[:params] || {}).merge(path_parameters)
+        params = options.fetch(:params, {}).merge(path_parameters)
 
         env_builder = EnvBuilder.new(
           method: method,
           controller: controller_name,
           action: action,
           headers: options[:headers],
-          params: options[:params]
+          params: params
         )
         env_builder.build
       end
