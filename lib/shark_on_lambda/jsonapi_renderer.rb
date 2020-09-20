@@ -100,7 +100,7 @@ module SharkOnLambda
     def transform_active_model_errors(errors)
       return errors unless active_model_error?(errors)
 
-      result = errors.messages.map do |attribute, attribute_errors|
+      errors.messages.flat_map do |attribute, attribute_errors|
         attribute_errors.map do |attribute_error|
           error_message = "`#{attribute_name(attribute)}' #{attribute_error}"
           Errors[422].new(error_message).tap do |error|
@@ -108,7 +108,6 @@ module SharkOnLambda
           end
         end
       end
-      result.flatten! || result
     end
 
     def unrenderable_objects(object, options)
