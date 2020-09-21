@@ -8,7 +8,7 @@ module SharkOnLambda
 
     class << self
       def config
-        Configuration.instance
+        @config ||= Configuration.new
       end
 
       def inherited(subclass)
