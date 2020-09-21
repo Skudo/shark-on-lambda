@@ -50,7 +50,7 @@ RSpec.describe SharkOnLambda::Application do
         # Doing the obvious
         #
         #     SharkOnLambda.application.middleware.use(
-        #       SharkOnLambda::Middleware::Rescuer
+        #       SharkOnLambda::Middleware::JsonapiRescuer
         #     )
         #
         # does not work, because it throws an error:
@@ -58,7 +58,7 @@ RSpec.describe SharkOnLambda::Application do
         #     FrozenError: can't modify frozen Array
         #
         stack = ActionDispatch::MiddlewareStack.new
-        stack.use(SharkOnLambda::Middleware::Rescuer)
+        stack.use(SharkOnLambda::Middleware::JsonapiRescuer)
         allow(SharkOnLambda.application).to(
           receive(:middleware).and_return(stack)
         )
