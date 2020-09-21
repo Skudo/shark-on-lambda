@@ -13,10 +13,3 @@ paths_to_skip.each do |path_to_skip|
   loader.collapse(path_to_skip) if File.directory?(path_to_skip)
 end
 loader.setup
-
-module TestApplication
-  class Application < SharkOnLambda::Application
-    config.root = File.expand_path(__dir__)
-  end
-end
-SharkOnLambda.application.initialize!

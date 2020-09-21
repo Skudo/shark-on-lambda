@@ -17,6 +17,13 @@ RSpec.configure do |config|
     SharkOnLambda.logger.level = :warn
   end
 
+  config.before do
+    Class.new(SharkOnLambda::Application) do
+      self.config.root = File.expand_path('test_application', __dir__)
+    end
+    SharkOnLambda.application.initialize!
+  end
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
 
