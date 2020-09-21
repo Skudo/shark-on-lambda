@@ -2,7 +2,7 @@
 
 RSpec.describe SharkOnLambda::RSpec::EnvBuilder do
   let(:method) { 'GET' }
-  let(:controller) { 'TestApplication::ApiGatewayController' }
+  let(:controller) { TestApplication::ApiGatewayController }
   let(:action) { :index }
   let(:headers) do
     {
