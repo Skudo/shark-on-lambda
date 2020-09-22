@@ -26,7 +26,7 @@ module SharkOnLambda
       end
 
       def notify(error, env)
-        params = env['action_dispatch.request.parameters']
+        params = env.fetch('action_dispatch.request.parameters', {})
 
         ::Honeybadger.notify(
           error,
