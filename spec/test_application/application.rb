@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'shark-on-lambda'
+require 'shark_on_lambda'
 require 'zeitwerk'
 
 app_directory = File.expand_path('app', __dir__)
