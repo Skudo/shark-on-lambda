@@ -7,6 +7,8 @@ require 'bundler/setup'
 require 'active_model'
 require 'factory_bot'
 
+ENV['STAGE'] ||= 'test'
+
 require_relative 'test_application/application'
 
 RSpec.configure do |config|

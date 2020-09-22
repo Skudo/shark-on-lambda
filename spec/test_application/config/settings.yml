@@ -13,8 +13,8 @@ staging:
   port: 443
 
 test:
-  host: staging.example.com
-  port: 443
+  host: test.example.com
+  port: 8443
 
 production:
   host: example.com
