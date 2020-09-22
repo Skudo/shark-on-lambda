@@ -5,18 +5,13 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
     Class.new do
       include SharkOnLambda::RSpec::Helpers
 
-      def self.controller_name
-        'TestApplication::ApiGatewayController'
-      end
-
       def described_class
-        self.class.controller_name.constantize
+        TestApplication::ApiGatewayController
       end
     end
   end
 
   let(:action) { 'some_action' }
-  let(:controller_name) { class_with_mixin.controller_name.camelcase }
 
   let(:request_headers) do
     {
