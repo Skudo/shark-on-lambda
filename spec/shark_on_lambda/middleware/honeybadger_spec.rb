@@ -25,8 +25,8 @@ RSpec.shared_examples 'triggers a Honeybadger notification' do
   it 'includes additional information in the Honeybadger notification' do
     expected_options = {
       tags: tags,
-      controller: env['shark.controller'],
-      action: env['shark.action'],
+      controller: nil,
+      action: nil,
       parameters: env['action_dispatch.request.parameters']
     }
 
@@ -48,8 +48,6 @@ end
 RSpec.describe SharkOnLambda::Middleware::Honeybadger do
   let(:env) do
     {
-      'shark.controller' => 'controller',
-      'shark.action' => 'action',
       'action_dispatch.request.parameters' => {}
     }
   end
@@ -59,7 +57,7 @@ RSpec.describe SharkOnLambda::Middleware::Honeybadger do
   end
 
   context 'with no exceptions from the app' do
-    let(:app_response) { [200, {}, ['Hello, world!']] }
+    let(:app_response) { Rack::MockResponse.new(200, {}, 'Hello, world!') }
     let(:app) { ->(_env) { app_response } }
 
     it 'returns the response from the app' do

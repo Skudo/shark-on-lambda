@@ -26,12 +26,14 @@ module SharkOnLambda
       end
 
       def notify(error, env)
+        params = env['action_dispatch.request.parameters']
+
         ::Honeybadger.notify(
           error,
           tags: tags,
-          controller: env['shark.controller'],
-          action: env['shark.action'],
-          parameters: env['action_dispatch.request.parameters']
+          controller: params[:controller],
+          action: params[:action],
+          parameters: params
         )
       end
 
