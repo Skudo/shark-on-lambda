@@ -1,88 +1,49 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Application do
-  let(:body) do
-    Rack::BodyProxy.new(['Hello, world!']) do
+  shared_examples 'behaves like a Rack app' do
+    it 'eventually calls the dispatcher' do
+      expect(application.routes).to receive(:call)
+      subject
+    end
+
+    it 'returns a Rack-compatible response' do
+      status, headers, body = subject
+
+      expect(status).to be_present
+      expect(headers).to be_a(Hash)
+      expect(body).to be_present
+      expect(body).to be_an(Enumerable)
     end
   end
-  let(:dispatcher_response) { [200, {}, body] }
-  let(:env) do
-    {
-      'REQUEST_METHOD' => 'GET'
-    }
-  end
+
+  let(:dispatcher_response) { Rack::MockResponse.new(200, {}, 'Hello!').to_a }
+  let(:env) { {} }
 
   let(:application) { SharkOnLambda.application }
 
   before do
-    allow(SharkOnLambda.application.routes).to(
-      receive(:call).and_return(dispatcher_response)
-    )
+    allow(application.routes).to receive(:call).and_return(dispatcher_response)
   end
 
   describe '#call' do
     subject { application.call(env) }
 
     context 'without using any middleware' do
-      it 'eventually calls the dispatcher' do
-        expect(SharkOnLambda.application.routes).to(receive(:call))
-
-        subject
-      end
-
-      it 'returns a Rack-compatible response' do
-        status, headers, body = subject
-
-        expect(status).to be_present
-        expect(headers).to be_a(Hash)
-        expect(body).to be_present
-      end
-
-      it 'returns a closable body' do
-        _, _, body_proxy = subject
-
-        expect { body_proxy.close }.to_not raise_error
-      end
+      include_examples 'behaves like a Rack app'
     end
 
     context 'using middleware' do
-      before do
-        # Doing the obvious
-        #
-        #     SharkOnLambda.application.middleware.use(
-        #       SharkOnLambda::Middleware::JsonapiRescuer
-        #     )
-        #
-        # does not work, because it throws an error:
-        #
-        #     FrozenError: can't modify frozen Array
-        #
-        stack = ActionDispatch::MiddlewareStack.new
-        stack.use(SharkOnLambda::Middleware::JsonapiRescuer)
-        allow(SharkOnLambda.application).to(
-          receive(:middleware).and_return(stack)
-        )
-      end
+      let(:middleware) { SharkOnLambda::Middleware::JsonapiRescuer }
 
-      it 'eventually calls the dispatcher' do
-        expect(SharkOnLambda.application.routes).to(receive(:call))
+      before { application.middleware.use(middleware) }
 
+      it 'uses the middleware' do
+        expect_any_instance_of(middleware).to receive(:call).and_call_original
         subject
       end
 
-      it 'returns a Rack-compatible response' do
-        status, headers, body = subject
-
-        expect(status).to be_present
-        expect(headers).to be_a(Hash)
-        expect(body).to be_present
-      end
-
-      it 'returns a closable body' do
-        _, _, body_proxy = subject
-
-        expect { body_proxy.close }.to_not raise_error
-      end
+      include_examples 'behaves like a Rack app'
     end
   end
 
@@ -93,11 +54,10 @@ RSpec.describe SharkOnLambda::Application do
       it 'loads the right configuration' do
         expected_configuration = {
           credentials: {
-            password: 'secret-password',
-            username: 'test'
+            password: 'secret-password'
           },
-          host: 'localhost',
-          port: 8080
+          host: 'test.example.com',
+          port: 8443
         }.with_indifferent_access
 
         expect(subject).to eq(expected_configuration)
