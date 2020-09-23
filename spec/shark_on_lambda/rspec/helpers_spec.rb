@@ -147,7 +147,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
 
     context 'after a request had been made' do
       it 'returns the response object' do
-        instance.get :foo
+        instance.get :index
 
         expect(subject).to be_a(::Rack::MockResponse)
       end
