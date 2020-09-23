@@ -7,7 +7,13 @@ require 'bundler/setup'
 require 'active_model'
 require 'factory_bot'
 
+ENV['STAGE'] ||= 'test'
+
 require_relative 'test_application/application'
+
+Dir['shared_contexts/**/*.rb', base: __dir__].each do |shared_context|
+  load shared_context
+end
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
@@ -15,6 +21,13 @@ RSpec.configure do |config|
   config.before(:suite) do
     FactoryBot.find_definitions
     SharkOnLambda.logger.level = :warn
+  end
+
+  config.before do
+    Class.new(SharkOnLambda::Application) do
+      self.config.root = File.expand_path('test_application', __dir__)
+    end
+    SharkOnLambda.application.initialize!
   end
 
   # Enable flags like --only-failures and --next-failure

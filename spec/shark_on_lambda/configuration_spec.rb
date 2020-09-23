@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Configuration do
-  let(:instance) { described_class.instance }
+  let(:instance) { described_class.new }
 
   describe '#root=' do
     let(:path) { '/foo/bar' }

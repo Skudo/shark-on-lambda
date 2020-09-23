@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 SharkOnLambda.application.routes.draw do
-  get '/api_gateway', to: 'test_application/api_gateway#index'
-  match '/api_gateway', via: :all,
-                        to: 'test_application/api_gateway#some_action'
-  match '/api_gateway', via: :all, to: 'test_application/api_gateway#foo'
+  scope module: 'test_application' do
+    get '/api_gateway/shark-error', to: 'api_gateway#shark_error'
+    get '/api_gateway/unknown-error', to: 'api_gateway#unknown_error'
+
+    resources :api_gateway, only: %i[create index]
+  end
 end

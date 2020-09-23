@@ -4,15 +4,15 @@ module SharkOnLambda
   module RSpec
     module ResponseHelpers
       def jsonapi_attributes
-        jsonapi_data[:attributes] || {}
+        jsonapi_data.fetch(:attributes, {})
       end
 
       def jsonapi_data
-        parsed_body[:data] || {}
+        parsed_body.fetch(:data, {})
       end
 
       def jsonapi_errors
-        parsed_body[:errors] || []
+        parsed_body.fetch(:errors, [])
       end
 
       private

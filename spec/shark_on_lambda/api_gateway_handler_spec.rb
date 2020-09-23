@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe TestApplication::ApiGatewayHandler do
-  let!(:context) { build(:api_gateway_context) }
-  let!(:event) do
+  let(:context) { build(:api_gateway_context) }
+  let(:event) do
     build(:api_gateway_event, httpMethod: 'GET', path: '/api_gateway')
   end
 
-  let!(:app) { SharkOnLambda.application }
+  let(:app) { SharkOnLambda.application }
 
   describe '.call' do
     subject(:response) do

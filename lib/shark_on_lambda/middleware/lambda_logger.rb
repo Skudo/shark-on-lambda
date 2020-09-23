@@ -13,13 +13,10 @@ module SharkOnLambda
       def call!(env)
         start_time = Time.now
         response = app.call(env)
-        end_time = Time.now
+        duration = duration_in_ms(start_time, Time.now)
 
         if logger.info?
-          log_request(env: env,
-                      response: response,
-                      start_time: start_time,
-                      end_time: end_time)
+          log_request(env: env, response: response, duration: duration)
         end
 
         response
@@ -33,14 +30,14 @@ module SharkOnLambda
         size
       end
 
-      def log_request(env:, response:, start_time:, end_time:)
+      def log_request(env:, response:, duration:)
         log_object = {
           url: env['PATH_INFO'],
           method: env['REQUEST_METHOD'],
-          params: params(env),
+          params: env.fetch('action_dispatch.request.parameters', {}),
           status: response[0],
           length: body_size(response[2]),
-          duration: "#{duration_in_ms(start_time, end_time)} ms"
+          duration: "#{duration} ms"
         }
         logger.info log_object.to_json
       end
@@ -48,10 +45,6 @@ module SharkOnLambda
       def duration_in_ms(start_time, end_time)
         duration = (end_time - start_time) * 1000
         duration.abs.floor(3)
-      end
-
-      def params(env)
-        Rack::Utils.parse_nested_query(env['QUERY_STRING'])
       end
     end
   end

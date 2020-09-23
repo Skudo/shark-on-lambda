@@ -2,8 +2,6 @@
 
 module SharkOnLambda
   class Configuration < OpenStruct
-    include Singleton
-
     attr_reader :root
 
     def middleware

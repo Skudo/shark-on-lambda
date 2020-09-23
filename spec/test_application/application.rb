@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'shark-on-lambda'
+require 'shark_on_lambda'
 require 'zeitwerk'
 
 app_directory = File.expand_path('app', __dir__)
@@ -13,10 +13,3 @@ paths_to_skip.each do |path_to_skip|
   loader.collapse(path_to_skip) if File.directory?(path_to_skip)
 end
 loader.setup
-
-module TestApplication
-  class Application < SharkOnLambda::Application
-    config.root = File.expand_path(__dir__)
-  end
-end
-SharkOnLambda.application.initialize!

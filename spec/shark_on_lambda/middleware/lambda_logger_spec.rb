@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
-  let!(:method) { 'POST' }
-  let!(:path) { '/hello/world' }
-  let!(:params) do
+  let(:method) { 'POST' }
+  let(:headers) do
+    {
+      'content-type' => 'application/json'
+    }
+  end
+  let(:path) { '/api_gateway?include=something' }
+  let(:params) do
     {
       'foo' => 'bar',
       'nested' => %w[value1 value2],
@@ -14,49 +19,33 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       }
     }
   end
-  let!(:path_parameters) do
-    {
-      'id' => 3,
-      'parent_id' => 1
-    }
-  end
-  let!(:env) do
-    {
-      'REQUEST_METHOD' => method,
-      'PATH_INFO' => path,
-      'QUERY_STRING' => Rack::Utils.build_nested_query(params)
-    }
+  let(:env) do
+    trait = method.downcase
+    build(:rack_env, trait, headers: headers, action: path, params: params)
   end
 
-  let!(:status) { 200 }
-  let!(:headers) { {} }
-  let!(:body) { 'Hello, world!' }
-  let!(:response) { [status, headers, [body]] }
-  let!(:app) { ->(_env) { response } }
-
-  let!(:log_stream) { StringIO.new }
-  let!(:log_level) { :info }
-  let!(:logger) do
+  let(:log_stream) { StringIO.new }
+  let(:log_level) { :info }
+  let(:logger) do
     Logger.new(log_stream).tap { |logger| logger.level = log_level }
   end
-  let!(:instance) do
-    SharkOnLambda::Middleware::LambdaLogger.new(app, logger: logger)
+  let(:instance) do
+    SharkOnLambda::Middleware::LambdaLogger.new(
+      SharkOnLambda.application,
+      logger: logger
+    )
   end
 
   describe '#call' do
-    let!(:logged_data) do
+    subject(:logged_data) do
       instance.call(env)
 
       log_stream.rewind
       log_stream.read
     end
 
-    it 'returns the response without modifying it' do
-      expect(instance.call(env)).to eq(response)
-    end
-
     context 'with a log level too high' do
-      let!(:log_level) { :warn }
+      let(:log_level) { :warn }
 
       it 'does not log anything' do
         expect(logged_data).to be_empty
@@ -64,26 +53,32 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     end
 
     context 'with a log level low enough' do
-      let!(:log_level) { :info }
+      let(:log_level) { :info }
 
       it 'logs the request path' do
-        expect(logged_data).to include(%("url":"#{path}"))
+        expect(logged_data).to include(%("url":"/api_gateway"))
       end
 
       it 'logs the request method' do
-        expect(logged_data).to include(%("method":"#{method}"))
+        expect(logged_data).to include(%("method":"#{method.to_s.upcase}"))
       end
 
       it 'logs the request params' do
-        expect(logged_data).to include(%("params":#{params.to_json}))
+        expected_params = params.deep_dup
+        expected_params[:include] = 'something'
+        expected_params.merge!(
+          controller: 'test_application/api_gateway',
+          action: 'create'
+        )
+        expect(logged_data).to include(%("params":#{expected_params.to_json}))
       end
 
       it 'logs the response status code' do
-        expect(logged_data).to include(%("status":#{status}))
+        expect(logged_data).to include(%("status":204))
       end
 
       it 'logs the response body length' do
-        expect(logged_data).to include(%("length":#{body.bytesize}))
+        expect(logged_data).to include(%("length":0))
       end
 
       it 'logs the duration' do
