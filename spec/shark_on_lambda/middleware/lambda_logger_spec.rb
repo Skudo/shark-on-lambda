@@ -7,7 +7,7 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       'content-type' => 'application/json'
     }
   end
-  let(:path) { '/api_gateway?blah=blubb' }
+  let(:path) { '/api_gateway?include=something' }
   let(:params) do
     {
       'foo' => 'bar',
@@ -20,13 +20,8 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
     }
   end
   let(:env) do
-    env_builder = SharkOnLambda::RSpec::EnvBuilder.new(
-      method: method,
-      headers: headers,
-      action: path,
-      params: params
-    )
-    env_builder.build
+    trait = method.downcase
+    build(:rack_env, trait, headers: headers, action: path, params: params)
   end
 
   let(:log_stream) { StringIO.new }
@@ -65,15 +60,15 @@ RSpec.describe SharkOnLambda::Middleware::LambdaLogger do
       end
 
       it 'logs the request method' do
-        expect(logged_data).to include(%("method":"#{method}"))
+        expect(logged_data).to include(%("method":"#{method.to_s.upcase}"))
       end
 
       it 'logs the request params' do
         expected_params = params.deep_dup
-        expected_params[:blah] = 'blubb'
+        expected_params[:include] = 'something'
         expected_params.merge!(
           controller: 'test_application/api_gateway',
-          action: 'some_action'
+          action: 'create'
         )
         expect(logged_data).to include(%("params":#{expected_params.to_json}))
       end

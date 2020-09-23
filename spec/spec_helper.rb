@@ -11,6 +11,10 @@ ENV['STAGE'] ||= 'test'
 
 require_relative 'test_application/application'
 
+Dir['shared_contexts/**/*.rb', base: __dir__].each do |shared_context|
+  load shared_context
+end
+
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 

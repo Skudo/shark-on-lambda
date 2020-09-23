@@ -2,14 +2,13 @@
 
 RSpec.describe SharkOnLambda::Middleware::Base do
   let(:env) { {} }
-
-  subject do
-    SharkOnLambda::Middleware::Base.new
-  end
+  let(:instance) { described_class.new }
 
   describe '#call' do
+    subject { instance.call(env) }
+
     it 'raises NotImplementedError' do
-      expect { subject.call(env) }.to raise_error(NotImplementedError)
+      expect { subject }.to raise_error(NotImplementedError)
     end
   end
 end
