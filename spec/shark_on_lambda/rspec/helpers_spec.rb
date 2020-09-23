@@ -1,86 +1,60 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::RSpec::Helpers do
-  let!(:class_with_mixin) do
+  let(:class_with_mixin) do
     Class.new do
       include SharkOnLambda::RSpec::Helpers
 
-      def self.controller_name
-        'foo_controller'
-      end
-
-      def self.description
-        controller_name.camelcase
-      end
-
-      def self.name
-        controller_name.camelcase
+      def described_class
+        TestApplication::ApiGatewayController
       end
     end
   end
 
-  let!(:action) { 'some_action' }
-  let!(:controller_name) { class_with_mixin.controller_name.camelcase }
+  let(:action) { 'some_action' }
 
-  let!(:request_headers) do
+  let(:request_headers) do
     {
       'Accept-Encoding': 'br, gzip, deflate',
       'Content-Type': 'text/plain'
     }
   end
-  let!(:request_params) do
+  let(:request_params) do
     {
+      id: 1,
+      type: 'things',
       foo: 'bar',
       baz: 'blubb'
     }
   end
-  let!(:request_path_parameters) do
-    {
-      id: 1,
-      type: 'things'
-    }
-  end
 
-  let!(:response_status) { 200 }
-  let!(:response_body) { 'Hello, world!' }
-  let!(:response_headers) do
+  let(:response_status) { 200 }
+  let(:response_body) { 'Hello, world!' }
+  let(:response_headers) do
     {
       'Content-Length' => response_body.bytesize,
       'Content-Type' => 'text/plain'
     }
   end
-  let!(:response) { [response_status, response_headers, [response_body]] }
-
-  before :all do
-    class FooController < SharkOnLambda::BaseController
-      def some_action
-        render plain: response_body
-      end
-    end
-  end
-
-  after :all do
-    Object.send(:remove_const, :FooController)
-  end
+  let(:response) { [response_status, response_headers, [response_body]] }
 
   before do
-    allow(SharkOnLambda.config.dispatcher).to(
+    allow(SharkOnLambda.application.routes).to(
       receive(:call).and_return(response)
     )
   end
 
-  let!(:instance) { class_with_mixin.new }
+  let(:instance) { class_with_mixin.new }
 
   %w[delete get patch post put].each do |http_verb|
     describe "##{http_verb.upcase}" do
-      let!(:env_without_streams) do
+      let(:env_without_streams) do
         builder = SharkOnLambda::RSpec::EnvBuilder.new(
           method: http_verb.upcase,
-          controller: controller_name,
+          controller: instance.described_class,
           action: action,
           headers: request_headers,
-          params: request_params,
-          path_parameters: request_path_parameters
+          params: request_params
         )
         builder.build.reject { |key, _| key.in?(%w[rack.errors rack.input]) }
       end
@@ -90,13 +64,12 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
           http_verb,
           action,
           headers: request_headers,
-          params: request_params,
-          path_parameters: request_path_parameters
+          params: request_params
         )
       end
 
       context 'without a "content-type" header' do
-        let!(:request_headers) do
+        let(:request_headers) do
           {
             'Accept-Encoding': 'br, gzip, deflate'
           }
@@ -104,7 +77,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
 
         it 'sets a default "content-type" header' do
           expected_env = env_without_streams
-          expected_env['CONTENT_TYPE'] = 'application/json'
+          expected_env['CONTENT_TYPE'] = 'application/vnd.api+json'
 
           expect(SharkOnLambda.application).to(
             receive(:call)
@@ -139,46 +112,9 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
         end
 
         it 'dispatches the right "env" object' do
-          expect(SharkOnLambda.config.dispatcher).to(
+          expect(SharkOnLambda.application).to(
             receive(:call).with(hash_including(env_without_streams))
-          )
-          subject
-        end
-      end
-
-      context 'with the "skip_middleware" parameter' do
-        subject do
-          instance.send(
-            http_verb,
-            action,
-            headers: request_headers,
-            params: request_params,
-            path_parameters: request_path_parameters,
-            skip_middleware: true
-          )
-        end
-
-        before do
-          allow_any_instance_of(SharkOnLambda::Response).to(
-            receive(:prepare!).and_return(response)
-          )
-        end
-
-        it 'does not call the middleware stack' do
-          expect(SharkOnLambda.application).to_not receive(:call)
-          subject
-        end
-
-        it 'dispatches the right "env" object straight to the controller' do
-          expect(SharkOnLambda::Request).to(
-            receive(:new)
-              .with(hash_including(env_without_streams))
-              .and_call_original
-          )
-          expect(FooController).to(
-            receive(:dispatch).with(action, anything, anything)
-          )
-
+          ).and_call_original
           subject
         end
       end
@@ -211,7 +147,7 @@ RSpec.describe SharkOnLambda::RSpec::Helpers do
 
     context 'after a request had been made' do
       it 'returns the response object' do
-        instance.get :foo
+        instance.get :index
 
         expect(subject).to be_a(::Rack::MockResponse)
       end

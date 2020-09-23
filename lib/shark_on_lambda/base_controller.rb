@@ -6,13 +6,6 @@ module SharkOnLambda
       AbstractController::Translation,
       AbstractController::AssetPaths,
 
-      ActionController::UrlFor,
-      ActionController::ConditionalGet,
-      ActionController::EtagWithTemplateDigest,
-      ActionController::EtagWithFlash,
-      ActionController::Caching,
-      ActionController::MimeResponds,
-      ActionController::ImplicitRender,
       ActionController::Cookies,
       ActionController::Flash,
       ActionController::FormBuilder,
@@ -24,8 +17,25 @@ module SharkOnLambda
       ActionController::HttpAuthentication::Token::ControllerMethods,
       ActionView::Layouts
     ].freeze
-    ActionController::Base.without_modules(EXCLUDED_MODULES).each do |mod|
+    ActionController::API.without_modules(EXCLUDED_MODULES).each do |mod|
       include mod
+    end
+
+    ActionController::Renderers.add :jsonapi do |object, options|
+      response.set_header('content-type', 'application/vnd.api+json')
+      return { data: {} }.to_json if object.nil?
+
+      jsonapi_renderer = JsonapiRenderer.new(object)
+
+      jsonapi_params = params.slice(:fields, :include)
+      jsonapi_params.permit!
+      jsonapi_params = JsonapiParameters.new(jsonapi_params.to_h)
+
+      render_options = jsonapi_params.to_h.deep_merge(options)
+      jsonapi_object = jsonapi_renderer.render(render_options)
+
+      response.status = jsonapi_renderer.status
+      jsonapi_object.to_json
     end
 
     def self.dispatch(*)
@@ -38,7 +48,17 @@ module SharkOnLambda
 
     def redirect_to(*)
       super
-      self.response_body = '' if no_body?
+
+      self.response_body = no_body? ? nil : { data: {} }.to_json
+    end
+
+    def render(object, options = {})
+      options.merge!(
+        jsonapi: object,
+        content_type: 'application/vnd.api+json'
+      )
+
+      super(options)
     end
 
     private

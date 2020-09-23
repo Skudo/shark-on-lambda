@@ -25,8 +25,8 @@ RSpec.shared_examples 'triggers a Honeybadger notification' do
   it 'includes additional information in the Honeybadger notification' do
     expected_options = {
       tags: tags,
-      controller: env['shark.controller'],
-      action: env['shark.action'],
+      controller: nil,
+      action: nil,
       parameters: env['action_dispatch.request.parameters']
     }
 
@@ -46,31 +46,19 @@ RSpec.shared_examples 'raises the exception from the app' do
 end
 
 RSpec.describe SharkOnLambda::Middleware::Honeybadger do
-  let!(:env) do
+  let(:env) do
     {
-      'shark.controller' => 'controller',
-      'shark.action' => 'action',
       'action_dispatch.request.parameters' => {}
     }
   end
-  let!(:tags) { 'tags' }
-  let!(:instance) do
+  let(:tags) { 'tags' }
+  let(:instance) do
     SharkOnLambda::Middleware::Honeybadger.new(app, tags: tags)
   end
 
-  before :all do
-    module Honeybadger
-      def self.notify(_error, _options = {}); end
-    end
-  end
-
-  after :all do
-    Object.send(:remove_const, :Honeybadger)
-  end
-
   context 'with no exceptions from the app' do
-    let!(:app_response) { [200, {}, ['Hello, world!']] }
-    let!(:app) { ->(_env) { app_response } }
+    let(:app_response) { Rack::MockResponse.new(200, {}, 'Hello, world!') }
+    let(:app) { ->(_env) { app_response } }
 
     it 'returns the response from the app' do
       expect(instance.call(env)).to eq(app_response)
@@ -81,20 +69,20 @@ RSpec.describe SharkOnLambda::Middleware::Honeybadger do
 
   context 'with a SharkOnLambda exception from the app' do
     context 'with a client error' do
-      let!(:app_exception) do
+      let(:app_exception) do
         SharkOnLambda::Errors[404].new('Nothing to see here.')
       end
-      let!(:app) { ->(_env) { raise app_exception } }
+      let(:app) { ->(_env) { raise app_exception } }
 
       include_examples 'raises the exception from the app'
       include_examples 'does not trigger a Honeybadger notification'
     end
 
     context 'with a server error' do
-      let!(:app_exception) do
+      let(:app_exception) do
         SharkOnLambda::Errors[500].new('Nothing to see here.')
       end
-      let!(:app) { ->(_env) { raise app_exception } }
+      let(:app) { ->(_env) { raise app_exception } }
 
       include_examples 'raises the exception from the app'
       include_examples 'triggers a Honeybadger notification'
@@ -102,8 +90,8 @@ RSpec.describe SharkOnLambda::Middleware::Honeybadger do
   end
 
   context 'with a non-SharkOnLambda exception from the app' do
-    let!(:app_exception) { RuntimeError.new('Nothing to see here.') }
-    let!(:app) { ->(_env) { raise app_exception } }
+    let(:app_exception) { RuntimeError.new('Nothing to see here.') }
+    let(:app) { ->(_env) { raise app_exception } }
 
     include_examples 'raises the exception from the app'
     include_examples 'triggers a Honeybadger notification'

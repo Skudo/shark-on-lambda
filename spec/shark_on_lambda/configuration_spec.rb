@@ -1,22 +1,16 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::Configuration do
-  subject { SharkOnLambda::Configuration }
+  let(:instance) { described_class.new }
 
-  it 'is a singleton' do
-    expect(subject.ancestors).to include(Singleton)
-    expect(subject.instance).to be_a(SharkOnLambda::Configuration)
-  end
+  describe '#root=' do
+    let(:path) { '/foo/bar' }
 
-  describe '#middleware' do
-    subject { SharkOnLambda.config.middleware }
+    before { instance.root = path }
 
-    it 'includes SharkOnLambda::Middleware::LambdaLogger by default' do
-      expect(subject.middlewares).to(
-        include(SharkOnLambda::Middleware::LambdaLogger)
-      )
+    it 'stores the root path as a Pathname object' do
+      expect(instance.root).to be_a(Pathname)
+      expect(instance.root.to_s).to eq(path)
     end
   end
-
-  # TODO: Add tests for SharkOnLambda::Configuration.
 end

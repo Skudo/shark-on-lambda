@@ -1,72 +1,63 @@
 # frozen_string_literal: true
 
-RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
-  let!(:class_with_mixin) do
+RSpec.describe SharkOnLambda::RSpec::Helpers do
+  let(:class_with_mixin) do
     Class.new do
-      include SharkOnLambda::RSpec::JsonapiHelpers
+      include SharkOnLambda::RSpec::Helpers
 
-      def self.controller_name
-        'jsonapi_foo_controller'
-      end
-
-      def self.description
-        controller_name.camelcase
-      end
-
-      def self.name
-        controller_name.camelcase
+      def described_class
+        TestApplication::ApiGatewayController
       end
     end
   end
 
-  let!(:action) { 'some_action' }
-  let!(:controller_name) { class_with_mixin.controller_name.camelcase }
+  let(:action) { 'some_action' }
 
-  let!(:request_headers) do
+  let(:request_headers) do
     {
       'Accept-Encoding': 'br, gzip, deflate'
     }
   end
-  let!(:request_params) do
+  let(:request_params) do
     {
       foo: 'bar',
       baz: 'blubb'
     }
   end
 
-  let!(:response_status) { 200 }
-  let!(:response_attributes) do
+  let(:response_status) { 200 }
+  let(:response_attributes) do
     {
       name: 'Foo',
       title: 'Bar'
     }.with_indifferent_access
   end
-  let!(:response_data) do
+  let(:response_data) do
     {
       id: SecureRandom.uuid,
       attributes: response_attributes
     }.with_indifferent_access
   end
-  let!(:response_body) do
+  let(:response_body) do
     {
       data: response_data
     }.to_json
   end
-  let!(:response_headers) do
+  let(:response_headers) do
     {
       'Content-Length' => response_body.bytesize,
       'Content-Type' => 'application/vnd.api+json'
     }
   end
-  let!(:response) { [response_status, response_headers, [response_body]] }
+  let(:response) { [response_status, response_headers, [response_body]] }
 
   before do
-    allow(SharkOnLambda.config.dispatcher).to(
+    allow(SharkOnLambda.application.routes).to(
       receive(:call).and_return(response)
     )
   end
 
-  let!(:instance) { class_with_mixin.new }
+  let(:instance) { class_with_mixin.new }
 
   before do
     instance.get action, headers: request_headers, params: request_params
@@ -93,8 +84,8 @@ RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
   end
 
   context 'with an error response' do
-    let!(:response_status) { 401 }
-    let!(:response_errors) do
+    let(:response_status) { 401 }
+    let(:response_errors) do
       [
         {
           status: '401',
@@ -103,7 +94,7 @@ RSpec.describe SharkOnLambda::RSpec::JsonapiHelpers do
         }
       ].map(&:with_indifferent_access)
     end
-    let!(:response_body) do
+    let(:response_body) do
       {
         errors: response_errors
       }.to_json

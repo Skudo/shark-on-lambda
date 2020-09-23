@@ -1,128 +1,81 @@
 # frozen_string_literal: true
 
 RSpec.describe SharkOnLambda::BaseController do
-  let!(:action) { 'index' }
-  let!(:rack_env) do
+  let(:action) { 'index' }
+  let(:rack_env) do
     {
       'rack.input' => StringIO.new(''),
       'REQUEST_METHOD' => 'GET'
     }
   end
-  let!(:request) { SharkOnLambda::Request.new(rack_env) }
-  let!(:response) { SharkOnLambda::Response.new }
-
-  let!(:controller_class) do
-    Class.new(SharkOnLambda::BaseController) do
-      before_action :before_action_method
-      after_action :after_action_method
-
-      rescue_from HandledException do
-        render plain: 'I was taken care of.', status: 400
-      end
-
-      def after_action_method; end
-
-      def before_action_method; end
-
-      def invalid_redirect
-        redirect_to nil
-      end
-
-      def redirect_once
-        redirect_to 'https://example.com'
-      end
-
-      def redirect_then_render
-        redirect_to 'https://example.com'
-        render plain: 'Hello, world!'
-      end
-
-      def redirect_twice
-        redirect_to 'https://example.com'
-        redirect_to 'https://example.com'
-      end
-
-      def redirect_with_304
-        redirect_to 'https://example.com', status: 304
-      end
-
-      def render_then_redirect
-        render plain: 'Hello, world!'
-        redirect_to 'https://example.com'
-      end
-
-      def render_twice
-        render plain: 'First render'
-        render plain: 'Second render'
-      end
-
-      def explode_with_handled_exception
-        raise HandledException, 'I was taken care of.'
-      end
-
-      def explode_with_unhandled_exception
-        raise UnhandledException, 'I was not taken care of.'
-      end
-
-      def after_action_method; end
-
-      def before_action_method; end
-    end
-  end
+  let(:request) { SharkOnLambda::Request.new(rack_env) }
+  let(:response) { SharkOnLambda::Response.new }
 
   subject do
-    controller_class.dispatch(action, request, response)
+    TestApplication::BaseController.dispatch(action, request, response)
   end
 
-  before :all do
-    class HandledException < StandardError; end
-    class UnhandledException < StandardError; end
+  context 'without a matching instance method' do
+    let(:action) { 'does-not-exist' }
+
+    it 'raises an error' do
+      expect { subject }.to raise_error(SharkOnLambda::Errors[500])
+    end
   end
 
-  after :all do
-    Object.send(:remove_const, :HandledException)
-    Object.send(:remove_const, :UnhandledException)
-  end
+  context 'when an exception is thrown' do
+    context 'if `rescue_from` knows about that exception' do
+      let(:action) { 'explode_with_handled_exception' }
 
-  describe '.dispatch' do
-    context 'without a matching instance method' do
-      let!(:action) { 'does-not-exist' }
+      it 'does not throw an exception' do
+        expect { subject }.to_not raise_error
+      end
 
-      it 'raises an error' do
-        expect { subject }.to raise_error(SharkOnLambda::Errors[500])
+      it 'is being handled by `rescue_from`' do
+        expected_body = {
+          errors: [
+            {
+              status: 400,
+              title: 'Bad Request',
+              detail: 'I was taken care of.',
+              source: {}
+            }
+          ]
+        }.to_json
+
+        subject
+        expect(response.response_code).to eq(400)
+        expect(response.body).to eq(expected_body)
       end
     end
 
-    context 'when an exception is thrown' do
-      context 'if `rescue_from` knows about that exception' do
-        let!(:action) { 'explode_with_handled_exception' }
+    context 'if `rescue_from` does not know about that exception' do
+      let(:action) { 'explode_with_unhandled_exception' }
 
-        it 'does not throw an exception' do
-          expect { subject }.to_not raise_error
-        end
-
-        it 'is being handled by `rescue_from`' do
-          subject
-          expect(response.response_code).to eq(400)
-          expect(response.body).to eq('I was taken care of.')
-        end
-      end
-
-      context 'if `rescue_from` does not know about that exception' do
-        let!(:action) { 'explode_with_unhandled_exception' }
-
-        it 'throws an exception' do
-          expect { subject }.to(
-            raise_error(UnhandledException, 'I was not taken care of.')
-          )
-        end
+      it 'throws an exception' do
+        expect { subject }.to raise_error(TestApplication::UnhandledException)
       end
     end
   end
 
   describe '#redirect_to' do
+    let(:action) { 'redirect_once' }
+    let(:url) { 'https://example.com' }
+
+    it 'sets an "empty" (as empty as JSON API permits "empty") response body' do
+      expectation = { data: {} }.to_json
+
+      subject
+      expect(response.body).to eq(expectation)
+    end
+
+    it 'responds with a 302 status code by default' do
+      subject
+      expect(response.response_code).to eq(302)
+    end
+
     context 'if #redirect_to has been called before' do
-      let!(:action) { 'redirect_twice' }
+      let(:action) { 'redirect_twice' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -130,7 +83,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'if #render has been called before' do
-      let!(:action) { 'render_then_redirect' }
+      let(:action) { 'render_then_redirect' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -138,7 +91,7 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'with an unparsable redirection URL' do
-      let!(:action) { 'invalid_redirect' }
+      let(:action) { 'invalid_redirect' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -146,35 +99,34 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'with no status code, but a parsable URL' do
-      let!(:action) { 'redirect_once' }
+      let(:action) { 'redirect_once' }
+
+      before { subject }
 
       it 'returns a 302 response with a body' do
-        subject
         expect(response.response_code).to eq(302)
         expect(response.body).to be_present
       end
 
       it 'sets the "location" header' do
-        subject
-        expect(response.get_header('Location')).to eq('https://example.com')
+        expect(response.get_header('Location')).to eq(url)
       end
     end
 
     context 'with a 304 status code' do
-      let!(:action) { 'redirect_with_304' }
+      let(:action) { 'redirect_with_304' }
+
+      before { subject }
 
       it 'sets the response status code' do
-        subject
         expect(response.response_code).to eq(304)
       end
 
       it 'sets the "location" header' do
-        subject
-        expect(response.get_header('Location')).to eq('https://example.com')
+        expect(response.get_header('Location')).to eq(url)
       end
 
       it 'does not set a response body' do
-        subject
         expect(response.body).to be_blank
       end
     end
@@ -183,7 +135,7 @@ RSpec.describe SharkOnLambda::BaseController do
   # TODO: Add actual testing for render behaviour.
   describe '#render' do
     context 'if #redirect_to has been called before' do
-      let!(:action) { 'redirect_then_render' }
+      let(:action) { 'redirect_then_render' }
 
       it 'raises an Internal Server Error' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
@@ -191,10 +143,52 @@ RSpec.describe SharkOnLambda::BaseController do
     end
 
     context 'if #render has been called before' do
-      let!(:action) { 'render_twice' }
+      let(:action) { 'render_twice' }
 
       it 'sets the response body to the second render result' do
         expect { subject }.to raise_error(SharkOnLambda::Errors[500])
+      end
+    end
+
+    context 'with nil' do
+      let(:action) { 'render_nil' }
+
+      before { subject }
+
+      it 'sets an "empty" response body' do
+        expectation = { data: {} }.to_json
+
+        expect(response.body).to eq(expectation)
+      end
+
+      it 'sets the right content-type header' do
+        expect(response.get_header('Content-Type')).to(
+          eq('application/vnd.api+json; charset=utf-8')
+        )
+      end
+    end
+
+    context 'with an unserialisable object' do
+      let(:action) { 'render_unserializable' }
+
+      before { subject }
+
+      it 'sets the response status code to 500' do
+        expect(response.status).to eq(500)
+      end
+
+      it 'sets the right content-type header' do
+        expect(response.get_header('Content-Type')).to(
+          eq('application/vnd.api+json; charset=utf-8')
+        )
+      end
+
+      it 'sets an error body with a helpful message' do
+        errors = JSON.parse(response.body)['errors']
+        helpful_errors = errors.select do |error|
+          error['detail'].include?('Could not find serializer for: ')
+        end
+        expect(helpful_errors).to_not be_empty
       end
     end
   end

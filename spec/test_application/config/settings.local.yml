@@ -1,3 +1,7 @@
 development:
   credentials:
     password: 'secret-password'
+
+test:
+  credentials:
+    password: 'secret-password'

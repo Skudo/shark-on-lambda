@@ -2,6 +2,7 @@
 
 require 'pry' if Gem.loaded_specs.key?('pry')
 
+require 'erb'
 require 'forwardable'
 require 'ostruct'
 require 'pathname'
@@ -14,6 +15,7 @@ require 'active_support/all'
 require 'jsonapi/deserializable'
 require 'jsonapi/serializable'
 require 'rack/utils'
+require 'rack-on-lambda'
 require 'yaml'
 require 'zeitwerk'
 
@@ -22,6 +24,7 @@ module SharkOnLambda; end
 
 Zeitwerk::Loader.for_gem.tap do |loader|
   loader.ignore(File.expand_path('shark-on-lambda.rb', __dir__))
+  loader.ignore(File.expand_path('shark_on_lambda/rake_tasks.rb', __dir__))
   loader.inflector.inflect(
     'rspec' => 'RSpec',
     'version' => 'VERSION'
@@ -35,75 +38,24 @@ module SharkOnLambda
   class << self
     extend Forwardable
 
-    attr_writer :logger
+    attr_writer :application, :env, :logger
 
-    def_instance_delegators :config, :root, :stage
+    def_instance_delegators :application, :initialize!, :root
 
     def application
       @application ||= Application.new
     end
 
-    def config
-      Configuration.instance
+    def configuration
+      application.config
     end
 
-    def configure
-      yield(config, secrets)
-    end
-
-    def initialize!
-      enable_jsonapi!
-
-      yield(config, secrets)
-
-      Configuration.load(stage)
-      Secrets.load(stage)
-      run_initializers
-
-      true
-    end
-
-    def load_configuration
-      Configuration.load(stage)
-      Secrets.load(stage)
-
-      true
+    def env
+      @env || ENV['STAGE'].presence || 'development'
     end
 
     def logger
-      @logger ||= Logger.new(STDOUT)
-    end
-
-    def reset_configuration
-      known_stage = config.stage
-      known_root = config.root
-
-      Configuration.reset
-      Secrets.reset
-
-      config.root = known_root
-      config.stage = known_stage
-
-      true
-    end
-
-    def secrets
-      Secrets.instance
-    end
-
-    private
-
-    def enable_jsonapi!
-      ::Mime::Type.register('application/vnd.api+json', :jsonapi)
-      ::ActionDispatch::Request.parameter_parsers[:jsonapi] =
-        ::ActionDispatch::Request.parameter_parsers[:json].dup
-    end
-
-    def run_initializers
-      initializers_path = root.join('config', 'initializers')
-      Dir.glob(initializers_path.join('*.rb')).each do |path|
-        load path
-      end
+      @logger ||= Logger.new($stdout)
     end
   end
 end

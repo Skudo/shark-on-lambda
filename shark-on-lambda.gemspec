@@ -30,18 +30,20 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'actionpack'
-  spec.add_dependency 'activesupport'
-  spec.add_dependency 'jsonapi-rb'
+  spec.required_ruby_version = '>= 2.5'
+
+  spec.add_dependency 'actionpack', '~> 6.0.0'
+  spec.add_dependency 'activesupport', '~> 6.0.0'
+  spec.add_dependency 'jsonapi-rb', '~> 0.5.0'
   spec.add_dependency 'rack', '>= 2.0.8', '< 3'
-  spec.add_dependency 'zeitwerk', '~> 2.2'
+  spec.add_dependency 'rack-on-lambda', '~> 1.0'
+  spec.add_dependency 'zeitwerk', '~> 2.3'
 
   # TODO: Do we really need `activemodel`?
   #       Or can we get away with mocking out ActiveModel::Errors?
   spec.add_development_dependency 'activemodel'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'factory_bot'
-  spec.add_development_dependency 'fasterer'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rake'

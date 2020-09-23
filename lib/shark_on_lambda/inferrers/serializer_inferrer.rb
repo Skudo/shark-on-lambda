@@ -31,14 +31,17 @@ module SharkOnLambda
       def serializer_class_names
         return @serializer_class_names if defined?(@serializer_class_names)
 
-        @serializer_class_names = object_class.ancestors.map do |ancestor|
-          ancestor_name = ancestor.name
-          next if ancestor_name.blank?
+        @serializer_class_names =
+          object_class.ancestors.reduce([]) do |result, ancestor|
+            ancestor_name = ancestor.name
+            next result if ancestor_name.blank?
 
-          name_inferrer = NameInferrer.from_model_name(ancestor_name)
-          name_inferrer.serializer
-        end
-        @serializer_class_names.compact! || @serializer_class_names
+            result << serializer_name_from_model_name(ancestor_name)
+          end
+      end
+
+      def serializer_name_from_model_name(model_name)
+        "#{model_name.underscore}_serializer".camelize
       end
     end
   end

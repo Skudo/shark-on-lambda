@@ -31,13 +31,13 @@ your RSpec tests and then use the methods `delete`, `get`, `patch`, `post`, or
 
 ```ruby
 RSpec.describe MyController do
-  let!(:service_token) { 'my-super-secret-service-token' }
-  let!(:headers) do
+  let(:service_token) { 'my-super-secret-service-token' }
+  let(:headers) do
     {
       'authorization' => "Bearer #{service_token}"
     }
   end    
-  let!(:params) do
+  let(:params) do
     {
       id: 1
     }
