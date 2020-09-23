@@ -2,6 +2,16 @@
 
 #### Unreleased
 
+#### 2.0.0
+- [Deprecate] Requiring `shark-on-lambda` is marked as deprecated in favour of requiring `shark_on_lambda`.
+- [Break] `SharkOnLambda::Dispatcher` was removed in favour of routing via `ActionDispatch::Routing`.
+- [Break] `SharkOnLambda::BaseController` now renders _JSON API_-compliant responses.
+- [Break] `SharkOnLambda::JsonapiController` was removed.
+- [Break] Support for `path_parameters` in RSpec helpers was removed.
+- [Break] Configuration files are not loaded automatically anymore.
+- Added support for routing.
+- Use `rack-on-lambda` as an adapter for events from the (REST API flavoured) API Gateway.
+
 #### 1.0.1
 
 - [Fix] `Jsonapi::Renderer#render` should always return a hash.
