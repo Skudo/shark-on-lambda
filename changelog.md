@@ -9,6 +9,8 @@
 - [Break] `SharkOnLambda::JsonapiController` was removed.
 - [Break] Support for `path_parameters` in RSpec helpers was removed.
 - [Break] Configuration files are not loaded automatically anymore.
+- Added `SharkOnLambda::Cacheable`.
+- Added `SharkOnLambda.cache` and `SharkOnLambda.global_cache`.
 - Added support for routing.
 - Use `rack-on-lambda` as an adapter for events from the (REST API flavoured) API Gateway.
 
