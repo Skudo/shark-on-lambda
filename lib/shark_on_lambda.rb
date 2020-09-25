@@ -38,7 +38,7 @@ module SharkOnLambda
   class << self
     extend Forwardable
 
-    attr_writer :application, :env, :logger
+    attr_writer :application, :cache, :env, :global_cache, :logger
 
     def_instance_delegators :application, :initialize!, :root
 
@@ -50,8 +50,16 @@ module SharkOnLambda
       application.config
     end
 
+    def cache
+      @cache ||= ActiveSupport::Cache::NullStore.new
+    end
+
     def env
       @env || ENV['STAGE'].presence || 'development'
+    end
+
+    def global_cache
+      @global_cache ||= ActiveSupport::Cache::NullStore.new
     end
 
     def logger

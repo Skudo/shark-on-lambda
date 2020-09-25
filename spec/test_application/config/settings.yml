@@ -13,6 +13,10 @@ staging:
   port: 443
 
 test:
+  cache_durations:
+    default: 180
+    known_item: 60
+
   host: test.example.com
   port: 8443
 
