@@ -68,7 +68,30 @@ RSpec.describe SharkOnLambda::Application do
       end
     end
 
-    context 'without existing configuration files' do
+    context 'with the main `.yml` file missing' do
+      subject { application.config_for(:local_only) }
+
+      it 'raises an exception' do
+        expect { subject }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'with the `.local.yml` file missing' do
+      subject { application.config_for(:database) }
+
+      it 'loads the right configuration' do
+        expected_configuration = {
+          adapter: 'mysql2',
+          host: 'localhost',
+          username: 'root',
+          database: 'database'
+        }.with_indifferent_access
+
+        expect(subject).to eq(expected_configuration)
+      end
+    end
+
+    context 'without any existing configuration files' do
       subject { application.config_for(:does_not_exist) }
 
       it 'raises an exception' do
