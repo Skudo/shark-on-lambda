@@ -53,6 +53,10 @@ RSpec.describe SharkOnLambda::Application do
 
       it 'loads the right configuration' do
         expected_configuration = {
+          cache_durations: {
+            default: 180,
+            known_item: 60
+          },
           credentials: {
             password: 'secret-password'
           },
