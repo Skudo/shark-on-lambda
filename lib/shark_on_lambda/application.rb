@@ -37,7 +37,7 @@ module SharkOnLambda
     end
 
     def config_for(name, env: SharkOnLambda.env)
-      config = load_config_file(name, env: env)
+      config = load_config_file(name, env: env, fail_with_exception: true)
       config.deep_merge(load_config_file("#{name}.local", env: env))
     end
 
@@ -53,10 +53,12 @@ module SharkOnLambda
       @routes = ActionDispatch::Routing::RouteSet.new_with_config(router_config)
     end
 
-    def load_config_file(name, env:)
+    def load_config_file(name, env:, fail_with_exception: false)
       filename = "#{name}.yml"
       config_file = SharkOnLambda.root.join('config', filename)
       unless config_file.exist?
+        return {} unless fail_with_exception
+
         raise ArgumentError,
               "Could not load configuration. No such file - #{config_file}"
       end
