@@ -36,7 +36,7 @@ module SharkOnLambda
       end
       class_name_parts = message.to_s.split(/\s+/)
       class_name_parts.map! { |word| word.gsub(/[^a-z]/i, '').capitalize }
-      class_name = class_name_parts.join('')
+      class_name = class_name_parts.join
       const_set(class_name, error_class)
 
       [status_code, error_class]

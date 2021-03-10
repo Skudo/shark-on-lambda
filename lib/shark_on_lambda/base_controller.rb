@@ -22,7 +22,7 @@ module SharkOnLambda
     end
 
     ActionController::Renderers.add :jsonapi do |object, options|
-      response.set_header('content-type', 'application/vnd.api+json')
+      response.content_type = 'application/vnd.api+json; charset=utf-8'
       return { data: {} }.to_json if object.nil?
 
       jsonapi_renderer = JsonapiRenderer.new(object)
@@ -50,15 +50,6 @@ module SharkOnLambda
       super
 
       self.response_body = no_body? ? nil : { data: {} }.to_json
-    end
-
-    def render(object, options = {})
-      options.merge!(
-        jsonapi: object,
-        content_type: 'application/vnd.api+json'
-      )
-
-      super(options)
     end
 
     private
