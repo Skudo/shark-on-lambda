@@ -22,7 +22,7 @@ module SharkOnLambda
     end
 
     ActionController::Renderers.add :jsonapi do |object, options|
-      response.set_header('content-type', 'application/vnd.api+json')
+      response.content_type = 'application/vnd.api+json; charset=utf-8'
       return { data: {} }.to_json if object.nil?
 
       jsonapi_renderer = JsonapiRenderer.new(object)
