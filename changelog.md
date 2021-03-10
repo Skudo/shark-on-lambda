@@ -2,6 +2,9 @@
 
 #### Unreleased
 
+#### 2.1.0
+- Remove forcing jsonapi header.
+
 #### 2.0.0
 - [Deprecate] Requiring `shark-on-lambda` is marked as deprecated in favour of requiring `shark_on_lambda`.
 - [Break] `SharkOnLambda::Dispatcher` was removed in favour of routing via `ActionDispatch::Routing`.
