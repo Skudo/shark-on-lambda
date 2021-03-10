@@ -6,7 +6,7 @@ module TestApplication
     after_action :after_action_method
 
     rescue_from HandledException do |e|
-      render jsonapi: SharkOnLambda::Errors[400].new(e.message) , status: 400
+      render jsonapi: SharkOnLambda::Errors[400].new(e.message), status: 400
     end
 
     def invalid_redirect

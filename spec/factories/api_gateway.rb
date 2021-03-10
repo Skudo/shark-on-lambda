@@ -22,8 +22,8 @@ FactoryBot.define do
     end
     multiValueQueryStringParameters do
       {
-        'foo': %w[foo],
-        'bar': %w[bar baz],
+        foo: %w[foo],
+        bar: %w[bar baz],
         'top[nested][nested_value]': %w[value],
         'top[nested][nested_array][]': %w[1]
       }

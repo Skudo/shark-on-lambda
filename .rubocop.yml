@@ -10,10 +10,15 @@ Metrics/BlockLength:
 Layout/LineLength:
   Max: 80
 
+Lint/EmptyClass:
+  Enabled: false
+
 Naming/FileName:
   Exclude:
     - lib/shark-on-lambda.rb
     - spec/shark-on-lambda_spec.rb
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
 
 # TODO: Add documentation and remove the Style/Documentation exception.
 Style/Documentation:
