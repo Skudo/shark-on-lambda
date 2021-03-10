@@ -52,15 +52,6 @@ module SharkOnLambda
       self.response_body = no_body? ? nil : { data: {} }.to_json
     end
 
-    def render(object, options = {})
-      options.merge!(
-        jsonapi: object,
-        content_type: 'application/vnd.api+json'
-      )
-
-      super(options)
-    end
-
     private
 
     def no_body?
