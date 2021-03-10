@@ -2,6 +2,10 @@
 
 #### Unreleased
 
+#### 2.1.0
+- [Fix] `SharkOnLambda::BaseController#render` does not set content type `application/vnd.api+json`
+- [Fix] `:jsonapi` Renderer sets content type `application/vnd.api+json` correctly
+
 #### 2.0.0
 - [Deprecate] Requiring `shark-on-lambda` is marked as deprecated in favour of requiring `shark_on_lambda`.
 - [Break] `SharkOnLambda::Dispatcher` was removed in favour of routing via `ActionDispatch::Routing`.
@@ -24,7 +28,7 @@
 - [Break] Remove the `ApiGateway` namespace, move all items from that namespace up by one level.
 - [Break] Remove build rake tasks.
 - [Added `SharkOnLambda::LambdaLogger`](https://www.pivotaltracker.com/story/show/169573932)
-- Added support for Rack-compatible middleware. 
+- Added support for Rack-compatible middleware.
 - `SharkOnLambda::BaseController` now acts more like `ActionController::BaseController`.
 - Support `ActiveModel::Errors` nested validation errors.
 - Added `SharkOnLambda::RSpec::Helpers` and `SharkOnLambda::RSpec::JsonapiHelpers`.
