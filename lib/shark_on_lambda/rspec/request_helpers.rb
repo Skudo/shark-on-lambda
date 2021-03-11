@@ -20,9 +20,7 @@ module SharkOnLambda
       end
 
       def response
-        if @response.nil?
-          raise 'You must make a request before you can request a response.'
-        end
+        raise 'You must make a request before you can request a response.' if @response.nil?
 
         @response
       end

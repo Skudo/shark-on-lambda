@@ -15,9 +15,7 @@ module SharkOnLambda
         response = app.call(env)
         duration = duration_in_ms(start_time, Time.now)
 
-        if logger.info?
-          log_request(env: env, response: response, duration: duration)
-        end
+        log_request(env: env, response: response, duration: duration) if logger.info?
 
         response
       end

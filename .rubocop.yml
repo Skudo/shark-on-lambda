@@ -8,7 +8,7 @@ Metrics/BlockLength:
     - 'spec/factories/*.rb'
 
 Layout/LineLength:
-  Max: 80
+  Max: 100
 
 Lint/EmptyClass:
   Enabled: false

@@ -21,9 +21,7 @@ module SharkOnLambda
       protected
 
       def object_class
-        unless @object_class.is_a?(String) || @object_class.is_a?(Symbol)
-          return @object_class
-        end
+        return @object_class unless @object_class.is_a?(String) || @object_class.is_a?(Symbol)
 
         @object_class.to_s.camelize.constantize
       end
