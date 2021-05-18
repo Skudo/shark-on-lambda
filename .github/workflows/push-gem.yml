@@ -9,10 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Ruby 2.5
-        uses: actions/setup-ruby@v1
+      - name: Set up Ruby 2.7        uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: 2.7.x
       - name: Run RSpec
         run: |
           gem install bundler
@@ -23,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Ruby 2.5
+      - name: Set up Ruby 2.7
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: 2.7.x
       - name: Run rubocop
         run: |
           gem install bundler
@@ -37,10 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Set up Ruby 2.5
+      - name: Set up Ruby 2.7
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: 2.7.x
       - name: Build gem
         run: |
           gem install bundler
